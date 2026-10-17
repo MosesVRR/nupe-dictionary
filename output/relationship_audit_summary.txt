@@ -1,0 +1,25 @@
+Nupe Dictionary — Entry Relationship Audit
+==========================================
+Database: C:\Users\zephr\Desktop\Hobby Projects\nupe-dictionary\data\nupe_dictionary.sqlite3
+Database modified: NO (opened read-only)
+Entries scanned: 7830
+Candidate rows exported: 2844
+
+Counts (candidate rows can overlap):
+- alternative_spelling: 122
+- exact_headword_match: 2125
+- explicit_reference: 2644
+- matches_other_headword_after_normalization: 4
+- matches_other_headword_exactly: 30
+- no_matching_headword_found: 296
+- no_other_headword_match: 88
+- normalized_headword_match: 223
+- reference_marker_needs_review: 78
+
+Review notes:
+- Candidates are not confirmed relationships.
+- Reference detection is heuristic and may include false positives or miss unusual wording.
+- Normalized matches ignore combining diacritics for comparison only.
+- If multiple target entries match, all are listed rather than selecting one.
+- No entries were merged, deleted, or modified.
+CSV report: C:\Users\zephr\Desktop\Hobby Projects\nupe-dictionary\output\relationship_audit.csv

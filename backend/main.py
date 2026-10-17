@@ -11,8 +11,8 @@ DATABASE_PATH = PROJECT_ROOT / "data" / "nupe_dictionary.sqlite3"
 
 app = FastAPI(
     title="Nupe Dictionary API",
-    description="Search Nupe headwords and their English definitions.",
-    version="0.2.0",
+    description="Search and browse Nupe headwords and their English definitions.",
+    version="0.3.0",
 )
 
 app.add_middleware(
@@ -27,13 +27,7 @@ app.add_middleware(
 
 
 def normalize_search_text(value: str | None) -> str:
-    """Normalize text for matching without changing the stored spelling.
-
-    NFD separates combining diacritic marks from their base letters; removing
-    those marks makes a query such as "fako" match "fákó". Original database
-    values are returned unchanged. This is a convenience search, not a claim
-    that words with different diacritics are linguistically identical.
-    """
+    """Normalize text for matching without changing stored spellings."""
     if not value:
         return ""
 
@@ -66,11 +60,131 @@ def get_connection():
     return connection
 
 
+def serialize_entries(connection, matches):
+    """Load the details shown by both search and alphabetical browsing."""
+    results = []
+
+    for match in matches:
+        entry_id = match["entry_id"]
+
+        senses = connection.execute(
+            """
+            SELECT sense_order, part_of_speech,
+                   definition_en, category_code
+            FROM senses
+            WHERE entry_id = ?
+            ORDER BY sense_order;
+            """,
+            (entry_id,),
+        ).fetchall()
+
+        information = connection.execute(
+            """
+            SELECT information
+            FROM additional_information
+            WHERE entry_id = ?
+            ORDER BY information_order;
+            """,
+            (entry_id,),
+        ).fetchall()
+
+        alternatives = connection.execute(
+            """
+            SELECT spelling
+            FROM alternative_spellings
+            WHERE entry_id = ?
+            ORDER BY spelling;
+            """,
+            (entry_id,),
+        ).fetchall()
+
+        results.append({
+            "headword": match["headword"],
+            "source_printed_page": match["source_printed_page"],
+            "senses": [dict(row) for row in senses],
+            "additional_information": [
+                row["information"] for row in information
+            ],
+            "alternative_spellings": [
+                row["spelling"] for row in alternatives
+            ],
+        })
+
+    return results
+
+
 @app.get("/")
 def home():
     return {
         "message": "Nupe Dictionary API",
         "docs": "/docs",
+    }
+
+
+@app.get("/api/suggest")
+def suggest_dictionary(
+    q: str = Query(min_length=1, max_length=100),
+    limit: int = Query(default=8, ge=1, le=12),
+):
+    """Return headwords matching the beginning of a query for autocomplete."""
+    query = q.strip()
+    normalized_query = normalize_search_text(query)
+
+    if not normalized_query:
+        return {"query": query, "count": 0, "suggestions": []}
+
+    sql = """
+        WITH candidates AS (
+            SELECT
+                e.entry_id,
+                e.headword,
+                CASE
+                    WHEN e.headword = ? COLLATE NOCASE THEN 0
+                    WHEN normalize_search(e.headword) = ? THEN 1
+                    ELSE 2
+                END AS match_rank
+            FROM entries AS e
+            WHERE substr(normalize_search(e.headword), 1, length(?)) = ?
+
+            UNION ALL
+
+            SELECT
+                e.entry_id,
+                e.headword,
+                CASE
+                    WHEN a.spelling = ? COLLATE NOCASE THEN 0
+                    WHEN normalize_search(a.spelling) = ? THEN 1
+                    ELSE 2
+                END AS match_rank
+            FROM entries AS e
+            JOIN alternative_spellings AS a ON a.entry_id = e.entry_id
+            WHERE substr(normalize_search(a.spelling), 1, length(?)) = ?
+        ),
+        ranked AS (
+            SELECT entry_id, headword, MIN(match_rank) AS match_rank
+            FROM candidates
+            GROUP BY entry_id, headword
+        )
+        SELECT headword
+        FROM ranked
+        ORDER BY match_rank, normalize_search(headword), headword
+        LIMIT ?;
+    """
+
+    params = (
+        query, normalized_query, normalized_query, normalized_query,
+        query, normalized_query, normalized_query, normalized_query,
+        limit,
+    )
+
+    with get_connection() as connection:
+        rows = connection.execute(sql, params).fetchall()
+
+    suggestions = [{"headword": row["headword"]} for row in rows]
+    return {
+        "query": query,
+        "count": len(suggestions),
+        "suggestions": suggestions,
     }
 
 
@@ -87,9 +201,6 @@ def search_dictionary(
             detail="Enter a word containing searchable letters or numbers.",
         )
 
-    # Rank exact original spelling first, then normalized exact matches,
-    # then prefix matches, then substring matches. Search alternative
-    # spellings as well as headwords. Stored spellings are never modified.
     sql = """
         WITH candidates AS (
             SELECT
@@ -125,7 +236,7 @@ def search_dictionary(
         SELECT e.entry_id, e.headword, e.source_printed_page, ranked.match_rank
         FROM ranked
         JOIN entries AS e ON e.entry_id = ranked.entry_id
-        ORDER BY ranked.match_rank, e.headword COLLATE NOCASE
+        ORDER BY ranked.match_rank, normalize_search(e.headword), e.headword
         LIMIT 50;
     """
 
@@ -138,56 +249,77 @@ def search_dictionary(
 
     with get_connection() as connection:
         matches = connection.execute(sql, params).fetchall()
-        results = []
-
-        for match in matches:
-            entry_id = match["entry_id"]
-
-            senses = connection.execute(
-                """
-                SELECT sense_order, part_of_speech,
-                       definition_en, category_code
-                FROM senses
-                WHERE entry_id = ?
-                ORDER BY sense_order;
-                """,
-                (entry_id,),
-            ).fetchall()
-
-            information = connection.execute(
-                """
-                SELECT information
-                FROM additional_information
-                WHERE entry_id = ?
-                ORDER BY information_order;
-                """,
-                (entry_id,),
-            ).fetchall()
-
-            alternatives = connection.execute(
-                """
-                SELECT spelling
-                FROM alternative_spellings
-                WHERE entry_id = ?
-                ORDER BY spelling;
-                """,
-                (entry_id,),
-            ).fetchall()
-
-            results.append({
-                "headword": match["headword"],
-                "source_printed_page": match["source_printed_page"],
-                "senses": [dict(row) for row in senses],
-                "additional_information": [
-                    row["information"] for row in information
-                ],
-                "alternative_spellings": [
-                    row["spelling"] for row in alternatives
-                ],
-            })
+        results = serialize_entries(connection, matches)
 
     return {
         "query": query,
         "count": len(results),
+        "results": results,
+    }
+
+
+@app.get("/api/browse")
+def browse_dictionary(
+    letter: str = Query(default="all", min_length=1, max_length=10),
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=100),
+):
+    """Browse headwords alphabetically, with optional first-letter filtering."""
+    selected_letter = letter.strip().casefold()
+
+    if selected_letter != "all":
+        normalized_letter = normalize_search_text(selected_letter)
+        if len(normalized_letter) != 1 or not normalized_letter.isalpha():
+            raise HTTPException(
+                status_code=422,
+                detail="Choose 'all' or a single alphabetic letter.",
+            )
+    else:
+        normalized_letter = ""
+
+    with get_connection() as connection:
+        if selected_letter == "all":
+            total = connection.execute(
+                "SELECT COUNT(*) FROM entries;"
+            ).fetchone()[0]
+
+            matches = connection.execute(
+                """
+                SELECT entry_id, headword, source_printed_page
+                FROM entries
+                ORDER BY normalize_search(headword), headword
+                LIMIT ? OFFSET ?;
+                """,
+                (limit, offset),
+            ).fetchall()
+        else:
+            total = connection.execute(
+                """
+                SELECT COUNT(*)
+                FROM entries
+                WHERE substr(normalize_search(headword), 1, 1) = ?;
+                """,
+                (normalized_letter,),
+            ).fetchone()[0]
+
+            matches = connection.execute(
+                """
+                SELECT entry_id, headword, source_printed_page
+                FROM entries
+                WHERE substr(normalize_search(headword), 1, 1) = ?
+                ORDER BY normalize_search(headword), headword
+                LIMIT ? OFFSET ?;
+                """,
+                (normalized_letter, limit, offset),
+            ).fetchall()
+
+        results = serialize_entries(connection, matches)
+
+    return {
+        "letter": selected_letter,
+        "count": len(results),
+        "total": total,
+        "offset": offset,
+        "limit": limit,
         "results": results,
     }
