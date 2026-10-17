@@ -1,3 +1,5 @@
+import os
+
 import sqlite3
 import unicodedata
 from pathlib import Path
@@ -15,11 +17,18 @@ app = FastAPI(
     version="0.3.0",
 )
 
+frontend_origins = [
+    origin.strip()
+    for origin in os.getenv("FRONTEND_URL", "").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    *frontend_origins,
     ],
     allow_methods=["GET"],
     allow_headers=["*"],
