@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { ref } from 'vue'
 
@@ -93,7 +92,7 @@ async function searchDictionary() {
 
     if (results.value.length === 0) {
       errorMessage.value =
-        'No matching entries found. Check the spelling and diacritics.'
+        'No matching entries found. Try a shorter spelling or omit the diacritics.'
     }
   } catch (error: unknown) {
     console.error('Dictionary search failed:', error)
@@ -124,14 +123,14 @@ async function searchDictionary() {
 
     <section class="search-section">
       <form class="search-form" @submit.prevent="searchDictionary">
-        <label for="search">Search for a Nupe word</label>
+        <label for="search">Search the Nupe dictionary</label>
 
         <div class="search-input">
           <input
             id="search"
             v-model="searchQuery"
             type="search"
-            placeholder="Enter a Nupe headword..."
+            placeholder="Type a Nupe word, with or without diacritics..."
             autocomplete="off"
             :disabled="loading"
           />
@@ -142,8 +141,8 @@ async function searchDictionary() {
         </div>
 
         <p class="hint">
-          Enter a complete headword or an alternative spelling.
-          Diacritics may be important.
+          You can enter a complete word or part of a word. Diacritics are optional
+          for searching; results retain the dictionary's original spelling.
         </p>
       </form>
     </section>
@@ -164,7 +163,7 @@ async function searchDictionary() {
       <div v-else-if="!hasSearched" class="empty-state">
         <h2>Start exploring</h2>
         <p>
-          Enter a Nupe word above to look up its English definitions.
+          Type a Nupe word above. You can search without entering its diacritics.
         </p>
       </div>
 
@@ -257,7 +256,6 @@ async function searchDictionary() {
 </template>
 
 <style>
-
 :root {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -551,5 +549,4 @@ footer {
     font-size: 1.6rem;
   }
 }
-
 </style>
