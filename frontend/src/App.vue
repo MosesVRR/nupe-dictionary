@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import CategoryCodeReference from './components/CategoryCodeReference.vue'
 import { getCategoryMeaning } from './data/categoryCodes'
 import DictionaryReadingGuide from './components/DictionaryReadingGuide.vue'
@@ -68,7 +68,19 @@ const specialKeyboardForms = computed(() =>
   keyboardForms.value.filter((form) => form.kind !== 'basic_letter'),
 )
 
+let connectionCheckTimer: ReturnType<typeof setInterval> | undefined
+
 onMounted(async () => {
+  isOnline.value = navigator.onLine
+  window.addEventListener('online', updateConnectionStatus)
+  window.addEventListener('offline', updateConnectionStatus)
+  window.addEventListener('focus', checkConnectionStatus)
+  document.addEventListener('visibilitychange', checkConnectionStatus)
+  // Android WebView may not reliably dispatch online/offline events when the
+  // network changes. Re-check reachability periodically as a fallback.
+  await checkConnectionStatus()
+  connectionCheckTimer = setInterval(checkConnectionStatus, 10000)
+  await loadOfflineDictionary()
   try {
     const response = await fetch(`${import.meta.env.BASE_URL}data/app_character_config.json`)
     if (!response.ok) {
@@ -89,6 +101,14 @@ onMounted(async () => {
       error instanceof Error ? error.message : 'Could not load character configuration.'
     console.error('Character keyboard configuration failed to load:', error)
   }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('online', updateConnectionStatus)
+  window.removeEventListener('offline', updateConnectionStatus)
+  window.removeEventListener('focus', checkConnectionStatus)
+  document.removeEventListener('visibilitychange', checkConnectionStatus)
+  if (connectionCheckTimer !== undefined) clearInterval(connectionCheckTimer)
 })
 
 function rememberCursor() {
@@ -122,6 +142,8 @@ const suggestions = ref<string[]>([])
 const suggestionsOpen = ref(false)
 let suggestionTimer: ReturnType<typeof setTimeout> | undefined
 let suggestionRequestId = 0
+// Only the most recently started search or browse request may update the screen.
+let dataRequestId = 0
 const results = ref<DictionaryEntry[]>([])
 const loading = ref(false)
 const errorMessage = ref('')
@@ -152,9 +174,210 @@ function normalizeEntries(entries: ApiDictionaryEntry[]): DictionaryEntry[] {
   }))
 }
 
+
+const EXPECTED_DICTIONARY_COUNT = 7830
+const DOWNLOAD_BATCH_SIZE = 100
+const OFFLINE_DB_NAME = 'nupe-dictionary-offline'
+const OFFLINE_DB_VERSION = 1
+const OFFLINE_STORE_NAME = 'dictionary'
+
+function updateConnectionStatus() {
+  // navigator.onLine is a quick hint; checkConnectionStatus also verifies
+  // that the dictionary API can actually be reached.
+  isOnline.value = navigator.onLine
+  if (navigator.onLine) void checkConnectionStatus()
+}
+
+async function checkConnectionStatus() {
+  if (!navigator.onLine) {
+    isOnline.value = false
+    return
+  }
+
+  try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 5000)
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/browse?letter=all&offset=0&limit=1`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+          signal: controller.signal,
+        },
+      )
+      isOnline.value = response.ok
+    } finally {
+      clearTimeout(timeout)
+    }
+  } catch {
+    isOnline.value = false
+  }
+}
+const offlineEntries = ref<DictionaryEntry[]>([])
+const offlineReady = ref(false)
+const downloadInProgress = ref(false)
+const downloadProgress = ref(0)
+const offlineStatus = ref('')
+const offlineError = ref('')
+const lastUpdated = ref<string | null>(null)
+const isOnline = ref(true)
+const downloadTotal = ref(EXPECTED_DICTIONARY_COUNT)
+
+function openOfflineDatabase(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    if (!('indexedDB' in window)) {
+      reject(new Error('Persistent offline storage is not available in this browser.'))
+      return
+    }
+    const request = window.indexedDB.open(OFFLINE_DB_NAME, OFFLINE_DB_VERSION)
+    request.onupgradeneeded = () => {
+      const db = request.result
+      if (!db.objectStoreNames.contains(OFFLINE_STORE_NAME)) {
+        db.createObjectStore(OFFLINE_STORE_NAME)
+      }
+    }
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error ?? new Error('Could not open offline storage.'))
+  })
+}
+
+async function readSavedDictionary(): Promise<DictionaryEntry[]> {
+  const db = await openOfflineDatabase()
+  try {
+    return await new Promise((resolve, reject) => {
+      const transaction = db.transaction(OFFLINE_STORE_NAME, 'readonly')
+      const request = transaction.objectStore(OFFLINE_STORE_NAME).get('complete')
+      request.onsuccess = () => {
+        const value = request.result
+        resolve(Array.isArray(value) ? value as DictionaryEntry[] : [])
+      }
+      request.onerror = () => reject(request.error ?? new Error('Could not read the saved dictionary.'))
+    })
+  } finally {
+    db.close()
+  }
+}
+
+async function saveDictionary(entries: DictionaryEntry[]): Promise<void> {
+  const db = await openOfflineDatabase()
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction(OFFLINE_STORE_NAME, 'readwrite')
+      const store = transaction.objectStore(OFFLINE_STORE_NAME)
+      const now = new Date().toISOString()
+      store.put(entries, 'complete')
+      store.put(now, 'updatedAt')
+      transaction.oncomplete = () => {
+        lastUpdated.value = now
+        resolve()
+      }
+      transaction.onerror = () => reject(transaction.error ?? new Error('Could not save the dictionary.'))
+      transaction.onabort = () => reject(transaction.error ?? new Error('Saving the dictionary was interrupted.'))
+    })
+  } finally {
+    db.close()
+  }
+}
+
+function normalizeForOfflineSearch(value: string): string {
+  return value.normalize('NFD').toLocaleLowerCase().replace(/\p{M}/gu, '').trim()
+}
+
+function findOfflineMatches(query: string): DictionaryEntry[] {
+  const needle = normalizeForOfflineSearch(query)
+  if (!needle) return []
+  return offlineEntries.value.filter((entry) => {
+    const candidates = [entry.headword, ...entry.alternative_spellings]
+    return candidates.some((word) => normalizeForOfflineSearch(word).includes(needle))
+  })
+}
+
+async function downloadDictionary() {
+  if (downloadInProgress.value) return
+  downloadInProgress.value = true
+  downloadProgress.value = 0
+  offlineError.value = ''
+  offlineStatus.value = 'Connecting to the dictionary…'
+  const downloaded: DictionaryEntry[] = []
+  let total = EXPECTED_DICTIONARY_COUNT
+  downloadTotal.value = total
+
+  try {
+    for (let offset = 0; offset < total; offset += DOWNLOAD_BATCH_SIZE) {
+      const params = new URLSearchParams({
+        letter: 'all',
+        offset: String(offset),
+        limit: String(DOWNLOAD_BATCH_SIZE),
+      })
+      const response = await fetch(`${API_BASE_URL}/api/browse?${params}`)
+      if (!response.ok) {
+        throw new Error(`Dictionary download failed (HTTP ${response.status}) at entry ${offset + 1}.`)
+      }
+      const data: BrowseResponse = await response.json()
+      if (!Array.isArray(data.results) || typeof data.total !== 'number') {
+        throw new Error('The server returned an unexpected dictionary format.')
+      }
+      if (offset === 0) {
+        total = data.total
+        downloadTotal.value = total
+      }
+      if (data.results.length === 0 && offset < total) {
+        throw new Error(`The server returned no entries at offset ${offset}; download stopped to avoid saving an incomplete dictionary.`)
+      }
+      downloaded.push(...normalizeEntries(data.results))
+      downloadProgress.value = Math.min(downloaded.length, total)
+      offlineStatus.value = `Downloading ${downloadProgress.value.toLocaleString()} of ${total.toLocaleString()} entries…`
+    }
+
+    if (downloaded.length !== total) {
+      throw new Error(`Only ${downloaded.length} of ${total} entries were received. The previous offline dictionary has been kept.`)
+    }
+
+    await saveDictionary(downloaded)
+    offlineEntries.value = downloaded
+    offlineReady.value = true
+    offlineStatus.value = `Offline dictionary ready: ${downloaded.length.toLocaleString()} entries saved on this device.`
+  } catch (error: unknown) {
+    offlineError.value = error instanceof Error
+      ? `${error.message} Your existing offline dictionary, if any, has not been replaced.`
+      : 'The dictionary could not be downloaded. Your existing offline dictionary has been kept.'
+    offlineStatus.value = ''
+  } finally {
+    downloadInProgress.value = false
+  }
+}
+
+async function loadOfflineDictionary() {
+  try {
+    const saved = await readSavedDictionary()
+    const db = await openOfflineDatabase()
+    try {
+      lastUpdated.value = await new Promise<string | null>((resolve, reject) => {
+        const transaction = db.transaction(OFFLINE_STORE_NAME, 'readonly')
+        const request = transaction.objectStore(OFFLINE_STORE_NAME).get('updatedAt')
+        request.onsuccess = () => resolve(typeof request.result === 'string' ? request.result : null)
+        request.onerror = () => reject(request.error ?? new Error('Could not read dictionary update time.'))
+      })
+    } finally {
+      db.close()
+    }
+    if (saved.length > 0) {
+      offlineEntries.value = saved
+      offlineReady.value = true
+      offlineStatus.value = `Offline dictionary available: ${saved.length.toLocaleString()} entries saved on this device.`
+    }
+  } catch (error) {
+    console.warn('Offline dictionary storage is not available:', error)
+  }
+}
+
 function scheduleSuggestions() {
   if (suggestionTimer) clearTimeout(suggestionTimer)
 
+  // Invalidate any suggestion request as soon as the query changes, not only
+  // when the next debounced request begins.
+  const requestId = ++suggestionRequestId
   const query = searchQuery.value.trim()
   suggestionsOpen.value = false
 
@@ -164,11 +387,11 @@ function scheduleSuggestions() {
   }
 
   suggestionTimer = setTimeout(async () => {
-    const requestId = ++suggestionRequestId
     try {
       const params = new URLSearchParams({ q: query, limit: '8' })
       const response = await fetch(`${API_BASE_URL}/api/suggest?${params}`)
-      if (!response.ok) return
+      if (!response.ok) throw new Error(`Suggestions returned HTTP ${response.status}.`)
+      if (requestId !== suggestionRequestId) return
 
       const data: { suggestions?: { headword: string }[] } = await response.json()
       if (requestId !== suggestionRequestId) return
@@ -176,9 +399,15 @@ function scheduleSuggestions() {
       suggestions.value = (data.suggestions ?? []).map((item) => item.headword)
       suggestionsOpen.value = suggestions.value.length > 0
     } catch {
-      // Suggestions are optional; the normal search remains available if this fails.
-      suggestions.value = []
-      suggestionsOpen.value = false
+      if (requestId !== suggestionRequestId) return
+      const needle = normalizeForOfflineSearch(query)
+      suggestions.value = offlineReady.value
+        ? offlineEntries.value
+            .filter((entry) => normalizeForOfflineSearch(entry.headword).startsWith(needle))
+            .slice(0, 8)
+            .map((entry) => entry.headword)
+        : []
+      suggestionsOpen.value = suggestions.value.length > 0
     }
   }, 180)
 }
@@ -193,6 +422,7 @@ function chooseSuggestion(headword: string) {
 async function searchDictionary() {
   if (suggestionTimer) clearTimeout(suggestionTimer)
   suggestionRequestId += 1
+  const requestId = ++dataRequestId
   suggestions.value = []
   suggestionsOpen.value = false
   const query = searchQuery.value.trim()
@@ -216,6 +446,8 @@ async function searchDictionary() {
   try {
     const url = `${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}`
     const response = await fetch(url)
+    // Ignore results from a request that has been superseded by a newer action.
+    if (requestId !== dataRequestId) return
 
     if (!response.ok) {
       let detail = `The API returned HTTP ${response.status}.`
@@ -229,6 +461,7 @@ async function searchDictionary() {
     }
 
     const data: SearchResponse = await response.json()
+    if (requestId !== dataRequestId) return
     if (!data || !Array.isArray(data.results)) {
       throw new Error('The API response was not in the expected format.')
     }
@@ -241,19 +474,29 @@ async function searchDictionary() {
         'No matching entries found. Try a shorter spelling or omit the diacritics.'
     }
   } catch (error: unknown) {
-    console.error('Dictionary search failed:', error)
-    errorMessage.value =
-      error instanceof TypeError
-        ? 'Could not reach the API. Check that FastAPI is running and CORS allows this frontend.'
-        : error instanceof Error
-          ? error.message
-          : 'An unexpected error occurred while searching.'
+    console.warn('Online dictionary search failed; trying offline data:', error)
+    if (requestId !== dataRequestId) return
+    if (offlineReady.value) {
+      results.value = findOfflineMatches(query)
+      resultCount.value = results.value.length
+      if (results.value.length === 0) {
+        errorMessage.value = 'No matching entries found in the downloaded dictionary. Try a shorter spelling or omit the diacritics.'
+      }
+    } else {
+      errorMessage.value =
+        error instanceof TypeError
+          ? 'Could not reach the API. Connect to the internet, or download the dictionary for offline use.'
+          : error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred while searching.'
+    }
   } finally {
-    loading.value = false
+    if (requestId === dataRequestId) loading.value = false
   }
 }
 
 async function browseDictionary(letter = 'all', offset = 0) {
+  const requestId = ++dataRequestId
   loading.value = true
   errorMessage.value = ''
   results.value = []
@@ -271,6 +514,7 @@ async function browseDictionary(letter = 'all', offset = 0) {
       limit: String(PAGE_SIZE),
     })
     const response = await fetch(`${API_BASE_URL}/api/browse?${params}`)
+    if (requestId !== dataRequestId) return
 
     if (!response.ok) {
       let detail = `The API returned HTTP ${response.status}.`
@@ -284,6 +528,7 @@ async function browseDictionary(letter = 'all', offset = 0) {
     }
 
     const data: BrowseResponse = await response.json()
+    if (requestId !== dataRequestId) return
     if (!data || !Array.isArray(data.results)) {
       throw new Error('The API response was not in the expected format.')
     }
@@ -297,15 +542,27 @@ async function browseDictionary(letter = 'all', offset = 0) {
       errorMessage.value = 'No entries were found for this letter.'
     }
   } catch (error: unknown) {
-    console.error('Dictionary browse failed:', error)
-    errorMessage.value =
-      error instanceof TypeError
-        ? 'Could not reach the API. Check that FastAPI is running and CORS allows this frontend.'
-        : error instanceof Error
-          ? error.message
-          : 'An unexpected error occurred while browsing.'
+    console.warn('Online dictionary browse failed; trying offline data:', error)
+    if (requestId !== dataRequestId) return
+    if (offlineReady.value) {
+      const allEntries = offlineEntries.value.filter((entry) =>
+        letter === 'all' || normalizeForOfflineSearch(entry.headword).startsWith(normalizeForOfflineSearch(letter)),
+      )
+      browseTotal.value = allEntries.length
+      results.value = allEntries.slice(offset, offset + PAGE_SIZE)
+      resultCount.value = results.value.length
+      browseOffset.value = offset
+      if (allEntries.length === 0) errorMessage.value = 'No entries were found for this letter.'
+    } else {
+      errorMessage.value =
+        error instanceof TypeError
+          ? 'Could not reach the API. Connect to the internet, or download the dictionary for offline use.'
+          : error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred while browsing.'
+    }
   } finally {
-    loading.value = false
+    if (requestId === dataRequestId) loading.value = false
   }
 }
 
@@ -452,6 +709,35 @@ function goToNextPage() {
         </section>
       </form>
 
+      <section class="offline-panel" aria-label="Offline dictionary">
+        <div class="browse-heading">
+          <div>
+            <h2>Offline dictionary</h2>
+            <p>Download the full dictionary once to search and browse without an internet connection.</p>
+            <p class="dictionary-meta">
+              <span :class="['connection-indicator', isOnline ? 'is-online' : 'is-offline']">{{ isOnline ? 'Online' : 'Offline' }}</span>
+              <span>{{ offlineReady ? `${offlineEntries.length.toLocaleString()} entries stored on this device` : 'No dictionary saved on this device yet' }}</span>
+            </p>
+            <p v-if="lastUpdated" class="dictionary-updated">Last updated: {{ new Date(lastUpdated).toLocaleString() }}</p>
+          </div>
+          <button
+            class="browse-all"
+            type="button"
+            :disabled="downloadInProgress"
+            @click="downloadDictionary"
+          >
+            {{ downloadInProgress ? 'Downloading…' : offlineReady ? 'Update dictionary' : 'Download dictionary' }}
+          </button>
+        </div>
+        <div v-if="downloadInProgress" class="download-progress" role="status" aria-live="polite">
+          <p>{{ offlineStatus }}</p>
+          <progress :value="downloadProgress" :max="downloadTotal || 1"></progress>
+          <p>{{ downloadProgress.toLocaleString() }} / {{ downloadTotal.toLocaleString() }} entries</p>
+        </div>
+        <p v-else-if="offlineStatus" class="hint" role="status">{{ offlineStatus }}</p>
+        <p v-if="offlineError" class="keyboard-error" role="alert">{{ offlineError }}</p>
+      </section>
+
       <div class="browse-panel">
         <div class="browse-heading">
           <div>
@@ -559,12 +845,13 @@ function goToNextPage() {
           </div>
         </div>
 
-        <article
-          v-for="(entry, index) in results"
-          :key="`${entry.headword}-${index}`"
-          class="entry-card"
-          :aria-labelledby="`entry-title-${index}`"
-        >
+        <div class="entries-scroll-area" role="region" aria-label="Dictionary entries" tabindex="0">
+          <article
+            v-for="(entry, index) in results"
+            :key="`${entry.headword}-${index}`"
+            class="entry-card"
+            :aria-labelledby="`entry-title-${index}`"
+          >
           <div class="entry-heading">
             <div class="headword-group">
               <p class="entry-label">NUPE HEADWORD</p>
@@ -610,7 +897,8 @@ function goToNextPage() {
               </li>
             </ul>
           </div>
-        </article>
+          </article>
+        </div>
 
         <div v-if="browseMode && browseTotal > 0" class="pagination pagination-bottom">
           <button type="button" :disabled="!hasPreviousPage || loading" @click="goToPreviousPage">
@@ -695,7 +983,12 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .basic-character-key { min-width: 36px; color: #315e49; background: #fff; }
 .keyboard-error { margin: 12px 0 0; color: #a43d31; font-size: 0.86rem; line-height: 1.5; }
 .category-reference-panel { margin-top: 22px; padding-top: 22px; border-top: 1px solid #e8ece7; }
-.browse-panel { margin-top: 25px; padding-top: 22px; border-top: 1px solid #e8ece7; }
+.offline-panel { margin-top: 22px; padding-top: 22px; border-top: 1px solid #e8ece7; }
+.dictionary-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px !important; color: #43564a !important; font-size: 0.88rem; }
+.connection-indicator { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 9px; font-weight: 700; font-size: 0.78rem; }
+.connection-indicator.is-online { background: #e2f4e7; color: #21633a; }
+.connection-indicator.is-offline { background: #fff0d8; color: #8a4d00; }
+.dictionary-updated { margin-top: 5px !important; color: #65716a; font-size: 0.82rem; }\n.download-progress { margin-top: 12px; }\n.download-progress p { margin: 7px 0; color: #65716a; font-size: 0.88rem; }\n.download-progress progress { display: block; width: 100%; height: 12px; accent-color: #315e49; }\n.browse-panel { margin-top: 25px; padding-top: 22px; border-top: 1px solid #e8ece7; }
 .browse-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .browse-heading h2 { margin: 0 0 6px; color: #1f3328; font-size: 1.12rem; font-weight: 750; line-height: 1.35; letter-spacing: -0.015em; }
 .browse-heading p { margin: 0; color: #65716a; font-size: 0.88rem; line-height: 1.5; }
@@ -714,6 +1007,19 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .pagination button { min-height: 36px; padding: 0 12px; color: #315e49; background: #fff; border: 1px solid #dce5dc; border-radius: 7px; cursor: pointer; }
 .pagination button:hover:not(:disabled) { background: #eaf1e9; }
 .pagination-bottom { padding-top: 10px; }
+.entries-scroll-area {
+  max-height: min(62vh, 680px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 2px 8px 2px 2px;
+  border-radius: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.entries-scroll-area:focus-visible {
+  outline: 2px solid #8ab49a;
+  outline-offset: 2px;
+}
 .entry-card { margin-bottom: 18px; padding: 25px; color: #202b27; background: #fff; border: 1px solid #e0e7df; border-radius: 14px; text-align: left; box-shadow: 0 4px 16px rgb(30 50 35 / 3%); }
 .entry-heading { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid #e8ece7; }
 .headword-group { min-width: 0; }
