@@ -26,24 +26,28 @@ frontend_origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    *frontend_origins,
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        *frontend_origins,
     ],
     allow_methods=["GET"],
     allow_headers=["*"],
 )
 
 
-def normalize_search_text(value: str | None) -> str:
-    """Normalize text for matching without changing stored spellings."""
+def normalize_search_exact(value: str | None) -> str:
+    """Canonical Unicode normalization while preserving diacritics."""
     if not value:
         return ""
+    return unicodedata.normalize("NFD", value.casefold()).strip()
 
-    decomposed = unicodedata.normalize("NFD", value.casefold())
+
+def normalize_search_text(value: str | None) -> str:
+    """Diacritic-insensitive fallback normalization."""
+    exact = normalize_search_exact(value)
     return "".join(
         character
-        for character in decomposed
+        for character in exact
         if unicodedata.category(character) != "Mn"
     ).strip()
 
@@ -64,6 +68,12 @@ def get_connection():
         "normalize_search",
         1,
         normalize_search_text,
+        deterministic=True,
+    )
+    connection.create_function(
+        "normalize_search_exact",
+        1,
+        normalize_search_exact,
         deterministic=True,
     )
     return connection
@@ -135,25 +145,29 @@ def suggest_dictionary(
     q: str = Query(min_length=1, max_length=100),
     limit: int = Query(default=8, ge=1, le=12),
 ):
-    """Return headwords matching the beginning of a query for autocomplete."""
+    """Suggest headwords matching a query anywhere, preserving diacritics first."""
     query = q.strip()
+    exact_query = normalize_search_exact(query)
     normalized_query = normalize_search_text(query)
 
-    if not normalized_query:
+    if not exact_query or not normalized_query:
         return {"query": query, "count": 0, "suggestions": []}
 
+    # Prefer matches that preserve the exact diacritic sequence, even when it
+    # occurs inside a headword. Fall back to diacritic-insensitive matching
+    # only after all exact-sequence matches.
     sql = """
         WITH candidates AS (
             SELECT
                 e.entry_id,
                 e.headword,
                 CASE
-                    WHEN e.headword = ? COLLATE NOCASE THEN 0
-                    WHEN normalize_search(e.headword) = ? THEN 1
+                    WHEN normalize_search_exact(e.headword) = ? THEN 0
+                    WHEN substr(normalize_search_exact(e.headword), 1, length(?)) = ? THEN 1
                     ELSE 2
                 END AS match_rank
             FROM entries AS e
-            WHERE substr(normalize_search(e.headword), 1, length(?)) = ?
+            WHERE instr(normalize_search_exact(e.headword), ?) > 0
 
             UNION ALL
 
@@ -161,13 +175,40 @@ def suggest_dictionary(
                 e.entry_id,
                 e.headword,
                 CASE
-                    WHEN a.spelling = ? COLLATE NOCASE THEN 0
-                    WHEN normalize_search(a.spelling) = ? THEN 1
+                    WHEN normalize_search_exact(a.spelling) = ? THEN 0
+                    WHEN substr(normalize_search_exact(a.spelling), 1, length(?)) = ? THEN 1
                     ELSE 2
                 END AS match_rank
             FROM entries AS e
             JOIN alternative_spellings AS a ON a.entry_id = e.entry_id
-            WHERE substr(normalize_search(a.spelling), 1, length(?)) = ?
+            WHERE instr(normalize_search_exact(a.spelling), ?) > 0
+
+            UNION ALL
+
+            SELECT
+                e.entry_id,
+                e.headword,
+                CASE
+                    WHEN normalize_search(e.headword) = ? THEN 3
+                    WHEN substr(normalize_search(e.headword), 1, length(?)) = ? THEN 4
+                    ELSE 5
+                END AS match_rank
+            FROM entries AS e
+            WHERE instr(normalize_search(e.headword), ?) > 0
+
+            UNION ALL
+
+            SELECT
+                e.entry_id,
+                e.headword,
+                CASE
+                    WHEN normalize_search(a.spelling) = ? THEN 3
+                    WHEN substr(normalize_search(a.spelling), 1, length(?)) = ? THEN 4
+                    ELSE 5
+                END AS match_rank
+            FROM entries AS e
+            JOIN alternative_spellings AS a ON a.entry_id = e.entry_id
+            WHERE instr(normalize_search(a.spelling), ?) > 0
         ),
         ranked AS (
             SELECT entry_id, headword, MIN(match_rank) AS match_rank
@@ -181,8 +222,10 @@ def suggest_dictionary(
     """
 
     params = (
-        query, normalized_query, normalized_query, normalized_query,
-        query, normalized_query, normalized_query, normalized_query,
+        exact_query, exact_query, exact_query, exact_query,
+        exact_query, exact_query, exact_query, exact_query,
+        normalized_query, normalized_query, normalized_query, normalized_query,
+        normalized_query, normalized_query, normalized_query, normalized_query,
         limit,
     )
 
@@ -202,6 +245,7 @@ def search_dictionary(
     q: str = Query(min_length=1, max_length=200),
 ):
     query = q.strip()
+    exact_query = normalize_search_exact(query)
     normalized_query = normalize_search_text(query)
 
     if not normalized_query:
@@ -210,32 +254,39 @@ def search_dictionary(
             detail="Enter a word containing searchable letters or numbers.",
         )
 
+    # Diacritic-preserving substring matches rank before broad,
+    # diacritic-insensitive matches. Canonical NFD normalization means
+    # composed and decomposed forms of the same spelling can match.
     sql = """
         WITH candidates AS (
             SELECT
                 e.entry_id,
                 CASE
-                    WHEN e.headword = ? COLLATE NOCASE THEN 0
-                    WHEN normalize_search(e.headword) = ? THEN 1
-                    WHEN substr(normalize_search(e.headword), 1, length(?)) = ? THEN 2
-                    ELSE 3
+                    WHEN normalize_search_exact(e.headword) = ? THEN 0
+                    WHEN instr(normalize_search_exact(e.headword), ?) > 0 THEN 1
+                    WHEN normalize_search(e.headword) = ? THEN 2
+                    WHEN substr(normalize_search(e.headword), 1, length(?)) = ? THEN 3
+                    ELSE 4
                 END AS match_rank
             FROM entries AS e
-            WHERE instr(normalize_search(e.headword), ?) > 0
+            WHERE instr(normalize_search_exact(e.headword), ?) > 0
+               OR instr(normalize_search(e.headword), ?) > 0
 
             UNION ALL
 
             SELECT
                 e.entry_id,
                 CASE
-                    WHEN a.spelling = ? COLLATE NOCASE THEN 0
-                    WHEN normalize_search(a.spelling) = ? THEN 1
-                    WHEN substr(normalize_search(a.spelling), 1, length(?)) = ? THEN 2
-                    ELSE 3
+                    WHEN normalize_search_exact(a.spelling) = ? THEN 0
+                    WHEN instr(normalize_search_exact(a.spelling), ?) > 0 THEN 1
+                    WHEN normalize_search(a.spelling) = ? THEN 2
+                    WHEN substr(normalize_search(a.spelling), 1, length(?)) = ? THEN 3
+                    ELSE 4
                 END AS match_rank
             FROM entries AS e
             JOIN alternative_spellings AS a ON a.entry_id = e.entry_id
-            WHERE instr(normalize_search(a.spelling), ?) > 0
+            WHERE instr(normalize_search_exact(a.spelling), ?) > 0
+               OR instr(normalize_search(a.spelling), ?) > 0
         ),
         ranked AS (
             SELECT entry_id, MIN(match_rank) AS match_rank
@@ -250,10 +301,10 @@ def search_dictionary(
     """
 
     params = (
-        query, normalized_query, normalized_query, normalized_query,
-        normalized_query,
-        query, normalized_query, normalized_query, normalized_query,
-        normalized_query,
+        exact_query, exact_query, normalized_query,
+        normalized_query, normalized_query, exact_query, normalized_query,
+        exact_query, exact_query, normalized_query,
+        normalized_query, normalized_query, exact_query, normalized_query,
     )
 
     with get_connection() as connection:

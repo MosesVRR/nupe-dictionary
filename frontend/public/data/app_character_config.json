@@ -1,0 +1,2016 @@
+{
+  "schema_version": 1,
+  "source_file": "output\\master_dictionary.jsonl",
+  "generated_from_observed_data_only": true,
+  "normalization_applied": false,
+  "notes": [
+    "Forms are observed Unicode letter clusters from headwords in the source file.",
+    "Combining marks are grouped with the preceding code point; no Unicode normalization is applied.",
+    "The list is descriptive, not a declaration that every observed form is linguistically valid.",
+    "Punctuation and whitespace are excluded from keyboard forms.",
+    "Alphabet index contains observed first letter clusters only; it does not define linguistic sort order."
+  ],
+  "summary": {
+    "valid_entries_with_headwords": 7830,
+    "records_missing_headword": 0,
+    "malformed_or_non_object_records": 0,
+    "unique_keyboard_forms": 99,
+    "unique_observed_initial_forms": 60
+  },
+  "keyboard_forms": [
+    {
+      "text": "A",
+      "code_points": [
+        "U+0041"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER A"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "Adidya"
+    },
+    {
+      "text": "a",
+      "code_points": [
+        "U+0061"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 2048,
+      "headwords_containing_form": 1622,
+      "example_headword": "a"
+    },
+    {
+      "text": "B",
+      "code_points": [
+        "U+0042"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER B"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 9,
+      "headwords_containing_form": 9,
+      "example_headword": "Bàdekó"
+    },
+    {
+      "text": "b",
+      "code_points": [
+        "U+0062"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER B"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1862,
+      "headwords_containing_form": 1634,
+      "example_headword": "ába"
+    },
+    {
+      "text": "C",
+      "code_points": [
+        "U+0043"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER C"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "Cèrě"
+    },
+    {
+      "text": "c",
+      "code_points": [
+        "U+0063"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER C"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 530,
+      "headwords_containing_form": 490,
+      "example_headword": "acigìrǐ"
+    },
+    {
+      "text": "D",
+      "code_points": [
+        "U+0044"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER D"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 3,
+      "headwords_containing_form": 3,
+      "example_headword": "Dòkòdzà"
+    },
+    {
+      "text": "d",
+      "code_points": [
+        "U+0064"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER D"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1355,
+      "headwords_containing_form": 1167,
+      "example_headword": "àbàdâ"
+    },
+    {
+      "text": "E",
+      "code_points": [
+        "U+0045"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER E"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 3,
+      "headwords_containing_form": 3,
+      "example_headword": "Ebã́gi"
+    },
+    {
+      "text": "e",
+      "code_points": [
+        "U+0065"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 973,
+      "headwords_containing_form": 877,
+      "example_headword": "ábèke... n"
+    },
+    {
+      "text": "F",
+      "code_points": [
+        "U+0046"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER F"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 3,
+      "headwords_containing_form": 3,
+      "example_headword": "Fasàmãza"
+    },
+    {
+      "text": "f",
+      "code_points": [
+        "U+0066"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER F"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 556,
+      "headwords_containing_form": 512,
+      "example_headword": "àfâ"
+    },
+    {
+      "text": "G",
+      "code_points": [
+        "U+0047"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER G"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 4,
+      "headwords_containing_form": 4,
+      "example_headword": "Gãmbãri"
+    },
+    {
+      "text": "g",
+      "code_points": [
+        "U+0067"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER G"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 2654,
+      "headwords_containing_form": 2185,
+      "example_headword": "abîgì"
+    },
+    {
+      "text": "h",
+      "code_points": [
+        "U+0068"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER H"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 99,
+      "headwords_containing_form": 74,
+      "example_headword": "ahá àhá"
+    },
+    {
+      "text": "i",
+      "code_points": [
+        "U+0069"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 2273,
+      "headwords_containing_form": 1953,
+      "example_headword": "a bè 'tí a nyi"
+    },
+    {
+      "text": "j",
+      "code_points": [
+        "U+006A"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER J"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 394,
+      "headwords_containing_form": 370,
+      "example_headword": "àgbyàja"
+    },
+    {
+      "text": "K",
+      "code_points": [
+        "U+004B"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER K"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 15,
+      "headwords_containing_form": 15,
+      "example_headword": "Kaaba"
+    },
+    {
+      "text": "k",
+      "code_points": [
+        "U+006B"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER K"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 2924,
+      "headwords_containing_form": 2374,
+      "example_headword": "ábèke... n"
+    },
+    {
+      "text": "L",
+      "code_points": [
+        "U+004C"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER L"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 12,
+      "headwords_containing_form": 12,
+      "example_headword": "Làlǔ"
+    },
+    {
+      "text": "l",
+      "code_points": [
+        "U+006C"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER L"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1208,
+      "headwords_containing_form": 1056,
+      "example_headword": "al-"
+    },
+    {
+      "text": "M",
+      "code_points": [
+        "U+004D"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER M"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 18,
+      "headwords_containing_form": 18,
+      "example_headword": "Màdǐ"
+    },
+    {
+      "text": "m",
+      "code_points": [
+        "U+006D"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER M"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 923,
+      "headwords_containing_form": 856,
+      "example_headword": "àdmã̀gi"
+    },
+    {
+      "text": "N",
+      "code_points": [
+        "U+004E"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER N"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 3,
+      "headwords_containing_form": 3,
+      "example_headword": "Ndǎ dàrì"
+    },
+    {
+      "text": "n",
+      "code_points": [
+        "U+006E"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 3689,
+      "headwords_containing_form": 2862,
+      "example_headword": "a bè 'tí a nyi"
+    },
+    {
+      "text": "n̰",
+      "code_points": [
+        "U+006E",
+        "U+0330"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N",
+        "COMBINING TILDE BELOW"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 22,
+      "headwords_containing_form": 21,
+      "example_headword": "gùn̰"
+    },
+    {
+      "text": "O",
+      "code_points": [
+        "U+004F"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER O"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "Okú"
+    },
+    {
+      "text": "o",
+      "code_points": [
+        "U+006F"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 853,
+      "headwords_containing_form": 663,
+      "example_headword": "a bo’za"
+    },
+    {
+      "text": "o̰",
+      "code_points": [
+        "U+006F",
+        "U+0330"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O",
+        "COMBINING TILDE BELOW"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "nuwo̰n̰nyã̀"
+    },
+    {
+      "text": "p",
+      "code_points": [
+        "U+0070"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER P"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1015,
+      "headwords_containing_form": 863,
+      "example_headword": "àkpárà"
+    },
+    {
+      "text": "R",
+      "code_points": [
+        "U+0052"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER R"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "Ràmàdân"
+    },
+    {
+      "text": "r",
+      "code_points": [
+        "U+0072"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER R"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1266,
+      "headwords_containing_form": 1162,
+      "example_headword": "acigìrǐ"
+    },
+    {
+      "text": "S",
+      "code_points": [
+        "U+0053"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER S"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 52,
+      "headwords_containing_form": 52,
+      "example_headword": "biʃe 'bá Sòkó"
+    },
+    {
+      "text": "s",
+      "code_points": [
+        "U+0073"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER S"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1131,
+      "headwords_containing_form": 1020,
+      "example_headword": "àlǎsã̀ngi"
+    },
+    {
+      "text": "T",
+      "code_points": [
+        "U+0054"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER T"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 16,
+      "headwords_containing_form": 16,
+      "example_headword": "Tákpà"
+    },
+    {
+      "text": "t",
+      "code_points": [
+        "U+0074"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER T"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1661,
+      "headwords_containing_form": 1447,
+      "example_headword": "a bè 'tí a nyi"
+    },
+    {
+      "text": "U",
+      "code_points": [
+        "U+0055"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER U"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "Ubandómã̀"
+    },
+    {
+      "text": "u",
+      "code_points": [
+        "U+0075"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 692,
+      "headwords_containing_form": 559,
+      "example_headword": "agãdãwuci"
+    },
+    {
+      "text": "ũ̀",
+      "code_points": [
+        "U+0075",
+        "U+0303",
+        "U+0300"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U",
+        "COMBINING TILDE",
+        "COMBINING GRAVE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 4,
+      "headwords_containing_form": 4,
+      "example_headword": "céginã́sũ̀"
+    },
+    {
+      "text": "v",
+      "code_points": [
+        "U+0076"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER V"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 95,
+      "headwords_containing_form": 89,
+      "example_headword": "bamvàgà"
+    },
+    {
+      "text": "W",
+      "code_points": [
+        "U+0057"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER W"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 4,
+      "headwords_containing_form": 4,
+      "example_headword": "Wáká tsùla"
+    },
+    {
+      "text": "w",
+      "code_points": [
+        "U+0077"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER W"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1184,
+      "headwords_containing_form": 990,
+      "example_headword": "àdǔwa"
+    },
+    {
+      "text": "Y",
+      "code_points": [
+        "U+0059"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER Y"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "Yàya"
+    },
+    {
+      "text": "y",
+      "code_points": [
+        "U+0079"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER Y"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 1963,
+      "headwords_containing_form": 1716,
+      "example_headword": "a bè 'tí a nyi"
+    },
+    {
+      "text": "Z",
+      "code_points": [
+        "U+005A"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER Z"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "Zàbǎ"
+    },
+    {
+      "text": "z",
+      "code_points": [
+        "U+007A"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER Z"
+      ],
+      "kind": "basic_letter",
+      "occurrences": 540,
+      "headwords_containing_form": 484,
+      "example_headword": "a bo’za"
+    },
+    {
+      "text": "À",
+      "code_points": [
+        "U+00C0"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER A WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "Àgùdà"
+    },
+    {
+      "text": "à",
+      "code_points": [
+        "U+00E0"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1978,
+      "headwords_containing_form": 1535,
+      "example_headword": "a ǎà"
+    },
+    {
+      "text": "á",
+      "code_points": [
+        "U+00E1"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1527,
+      "headwords_containing_form": 1265,
+      "example_headword": "á"
+    },
+    {
+      "text": "á̀",
+      "code_points": [
+        "U+00E1",
+        "U+0300"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH ACUTE",
+        "COMBINING GRAVE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 5,
+      "headwords_containing_form": 5,
+      "example_headword": "dá̀"
+    },
+    {
+      "text": "â",
+      "code_points": [
+        "U+00E2"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH CIRCUMFLEX"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 61,
+      "headwords_containing_form": 61,
+      "example_headword": "àbàdâ"
+    },
+    {
+      "text": "ã",
+      "code_points": [
+        "U+00E3"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH TILDE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 877,
+      "headwords_containing_form": 741,
+      "example_headword": "agãdãwuci"
+    },
+    {
+      "text": "ã̀",
+      "code_points": [
+        "U+00E3",
+        "U+0300"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH TILDE",
+        "COMBINING GRAVE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 889,
+      "headwords_containing_form": 738,
+      "example_headword": "àdmã̀gi"
+    },
+    {
+      "text": "ã́",
+      "code_points": [
+        "U+00E3",
+        "U+0301"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH TILDE",
+        "COMBINING ACUTE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 533,
+      "headwords_containing_form": 432,
+      "example_headword": "agúmã́"
+    },
+    {
+      "text": "ã̂",
+      "code_points": [
+        "U+00E3",
+        "U+0302"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH TILDE",
+        "COMBINING CIRCUMFLEX ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 18,
+      "headwords_containing_form": 18,
+      "example_headword": "fwã̂nyǐ"
+    },
+    {
+      "text": "ã̌",
+      "code_points": [
+        "U+00E3",
+        "U+030C"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH TILDE",
+        "COMBINING CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 111,
+      "headwords_containing_form": 101,
+      "example_headword": "àgã̌rúmã"
+    },
+    {
+      "text": "È",
+      "code_points": [
+        "U+00C8"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER E WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 4,
+      "headwords_containing_form": 4,
+      "example_headword": "Èdègi"
+    },
+    {
+      "text": "è",
+      "code_points": [
+        "U+00E8"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 842,
+      "headwords_containing_form": 760,
+      "example_headword": "a bè 'tí a nyi"
+    },
+    {
+      "text": "é",
+      "code_points": [
+        "U+00E9"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E WITH ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 422,
+      "headwords_containing_form": 357,
+      "example_headword": "agí aké áʃiʃì"
+    },
+    {
+      "text": "ê",
+      "code_points": [
+        "U+00EA"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E WITH CIRCUMFLEX"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 12,
+      "headwords_containing_form": 12,
+      "example_headword": "àsê"
+    },
+    {
+      "text": "Ì",
+      "code_points": [
+        "U+00CC"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER I WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "Ìnjil(a)"
+    },
+    {
+      "text": "ì",
+      "code_points": [
+        "U+00EC"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 774,
+      "headwords_containing_form": 664,
+      "example_headword": "abîgì"
+    },
+    {
+      "text": "í",
+      "code_points": [
+        "U+00ED"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 941,
+      "headwords_containing_form": 842,
+      "example_headword": "a bè 'tí a nyi"
+    },
+    {
+      "text": "î",
+      "code_points": [
+        "U+00EE"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH CIRCUMFLEX"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 40,
+      "headwords_containing_form": 38,
+      "example_headword": "abîgì"
+    },
+    {
+      "text": "ñ",
+      "code_points": [
+        "U+00F1"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N WITH TILDE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "bǐbàgi ñãmfa"
+    },
+    {
+      "text": "Ò",
+      "code_points": [
+        "U+00D2"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER O WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "jĩn tÒsã̀yi"
+    },
+    {
+      "text": "ò",
+      "code_points": [
+        "U+00F2"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 757,
+      "headwords_containing_form": 647,
+      "example_headword": "àgbòrǐ"
+    },
+    {
+      "text": "ó",
+      "code_points": [
+        "U+00F3"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 668,
+      "headwords_containing_form": 556,
+      "example_headword": "Àkókó"
+    },
+    {
+      "text": "ô",
+      "code_points": [
+        "U+00F4"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH CIRCUMFLEX"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 8,
+      "headwords_containing_form": 8,
+      "example_headword": "bô"
+    },
+    {
+      "text": "õ",
+      "code_points": [
+        "U+00F5"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH TILDE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 79,
+      "headwords_containing_form": 66,
+      "example_headword": "bubwõrwõ"
+    },
+    {
+      "text": "õ̀",
+      "code_points": [
+        "U+00F5",
+        "U+0300"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH TILDE",
+        "COMBINING GRAVE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 105,
+      "headwords_containing_form": 66,
+      "example_headword": "bwõ̀dwõ̀"
+    },
+    {
+      "text": "ṍ",
+      "code_points": [
+        "U+00F5",
+        "U+0301"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH TILDE",
+        "COMBINING ACUTE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 29,
+      "headwords_containing_form": 26,
+      "example_headword": "bwṍ"
+    },
+    {
+      "text": "õ̂",
+      "code_points": [
+        "U+00F5",
+        "U+0302"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH TILDE",
+        "COMBINING CIRCUMFLEX ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "kwṍkwõ̂nyǐ"
+    },
+    {
+      "text": "õ̌",
+      "code_points": [
+        "U+00F5",
+        "U+030C"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH TILDE",
+        "COMBINING CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 11,
+      "headwords_containing_form": 10,
+      "example_headword": "gbwõ̌"
+    },
+    {
+      "text": "Ù",
+      "code_points": [
+        "U+00D9"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER U WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 1,
+      "headwords_containing_form": 1,
+      "example_headword": "Ùbandawaki"
+    },
+    {
+      "text": "ù",
+      "code_points": [
+        "U+00F9"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 703,
+      "headwords_containing_form": 558,
+      "example_headword": "àdímù"
+    },
+    {
+      "text": "ú",
+      "code_points": [
+        "U+00FA"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 645,
+      "headwords_containing_form": 571,
+      "example_headword": "ádúwaci"
+    },
+    {
+      "text": "û",
+      "code_points": [
+        "U+00FB"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH CIRCUMFLEX"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 14,
+      "headwords_containing_form": 13,
+      "example_headword": "àlbàrû"
+    },
+    {
+      "text": "ě",
+      "code_points": [
+        "U+011B"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E WITH CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 183,
+      "headwords_containing_form": 169,
+      "example_headword": "àlěwà"
+    },
+    {
+      "text": "ĩ",
+      "code_points": [
+        "U+0129"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH TILDE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 334,
+      "headwords_containing_form": 328,
+      "example_headword": "ájĩ"
+    },
+    {
+      "text": "ĩ̀",
+      "code_points": [
+        "U+0129",
+        "U+0300"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH TILDE",
+        "COMBINING GRAVE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 97,
+      "headwords_containing_form": 96,
+      "example_headword": "ácĩ̀"
+    },
+    {
+      "text": "ĩ́",
+      "code_points": [
+        "U+0129",
+        "U+0301"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH TILDE",
+        "COMBINING ACUTE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 63,
+      "headwords_containing_form": 62,
+      "example_headword": "dáʃĩ́n"
+    },
+    {
+      "text": "ĩ̌",
+      "code_points": [
+        "U+0129",
+        "U+030C"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH TILDE",
+        "COMBINING CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 12,
+      "headwords_containing_form": 11,
+      "example_headword": "ásádĩ̌"
+    },
+    {
+      "text": "ń",
+      "code_points": [
+        "U+0144"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N WITH ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 5,
+      "headwords_containing_form": 4,
+      "example_headword": "ńdò"
+    },
+    {
+      "text": "ŏ̰",
+      "code_points": [
+        "U+014F",
+        "U+0330"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH BREVE",
+        "COMBINING TILDE BELOW"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "vwŏ̰nyí"
+    },
+    {
+      "text": "ũ",
+      "code_points": [
+        "U+0169"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH TILDE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 203,
+      "headwords_containing_form": 193,
+      "example_headword": "ázũ ázùmi"
+    },
+    {
+      "text": "ũ̀",
+      "code_points": [
+        "U+0169",
+        "U+0300"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH TILDE",
+        "COMBINING GRAVE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 292,
+      "headwords_containing_form": 280,
+      "example_headword": "agyákũ̀"
+    },
+    {
+      "text": "ṹ",
+      "code_points": [
+        "U+0169",
+        "U+0301"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH TILDE",
+        "COMBINING ACUTE ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 71,
+      "headwords_containing_form": 69,
+      "example_headword": "bikṹ"
+    },
+    {
+      "text": "ũ̂",
+      "code_points": [
+        "U+0169",
+        "U+0302"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH TILDE",
+        "COMBINING CIRCUMFLEX ACCENT"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 2,
+      "headwords_containing_form": 2,
+      "example_headword": "tũ̂n"
+    },
+    {
+      "text": "ũ̌",
+      "code_points": [
+        "U+0169",
+        "U+030C"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH TILDE",
+        "COMBINING CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 25,
+      "headwords_containing_form": 24,
+      "example_headword": "átũ̌"
+    },
+    {
+      "text": "ǎ",
+      "code_points": [
+        "U+01CE"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 352,
+      "headwords_containing_form": 326,
+      "example_headword": "a ǎà"
+    },
+    {
+      "text": "ǐ",
+      "code_points": [
+        "U+01D0"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 553,
+      "headwords_containing_form": 539,
+      "example_headword": "acigìrǐ"
+    },
+    {
+      "text": "ǒ",
+      "code_points": [
+        "U+01D2"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 172,
+      "headwords_containing_form": 153,
+      "example_headword": "àlùbǒta"
+    },
+    {
+      "text": "ǔ",
+      "code_points": [
+        "U+01D4"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH CARON"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 164,
+      "headwords_containing_form": 145,
+      "example_headword": "àdǔwa"
+    },
+    {
+      "text": "ǹ",
+      "code_points": [
+        "U+01F9"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N WITH GRAVE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 13,
+      "headwords_containing_form": 12,
+      "example_headword": "ǹnã́"
+    },
+    {
+      "text": "ʃ",
+      "code_points": [
+        "U+0283"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER ESH"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 380,
+      "headwords_containing_form": 347,
+      "example_headword": "agí aké áʃiʃì"
+    },
+    {
+      "text": "ʒ",
+      "code_points": [
+        "U+0292"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER EZH"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 203,
+      "headwords_containing_form": 190,
+      "example_headword": "àlǎʒì"
+    },
+    {
+      "text": "ṍ",
+      "code_points": [
+        "U+1E4D"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH TILDE AND ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 14,
+      "headwords_containing_form": 11,
+      "example_headword": "dzã́wṍndzã́wṍnyí"
+    },
+    {
+      "text": "ṹ",
+      "code_points": [
+        "U+1E79"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U WITH TILDE AND ACUTE"
+      ],
+      "kind": "special_or_modified_letter",
+      "occurrences": 3,
+      "headwords_containing_form": 3,
+      "example_headword": "bǎgṹ"
+    }
+  ],
+  "alphabet_index": [
+    {
+      "text": "A",
+      "code_points": [
+        "U+0041"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER A"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "Adidya"
+    },
+    {
+      "text": "a",
+      "code_points": [
+        "U+0061"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A"
+      ],
+      "headwords_starting_with_form": 39,
+      "example_headword": "a"
+    },
+    {
+      "text": "B",
+      "code_points": [
+        "U+0042"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER B"
+      ],
+      "headwords_starting_with_form": 9,
+      "example_headword": "Bàdekó"
+    },
+    {
+      "text": "b",
+      "code_points": [
+        "U+0062"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER B"
+      ],
+      "headwords_starting_with_form": 431,
+      "example_headword": "bá"
+    },
+    {
+      "text": "C",
+      "code_points": [
+        "U+0043"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER C"
+      ],
+      "headwords_starting_with_form": 2,
+      "example_headword": "Cèrě"
+    },
+    {
+      "text": "c",
+      "code_points": [
+        "U+0063"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER C"
+      ],
+      "headwords_starting_with_form": 120,
+      "example_headword": "cǎcǎnyí"
+    },
+    {
+      "text": "D",
+      "code_points": [
+        "U+0044"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER D"
+      ],
+      "headwords_starting_with_form": 3,
+      "example_headword": "Dòkòdzà"
+    },
+    {
+      "text": "d",
+      "code_points": [
+        "U+0064"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER D"
+      ],
+      "headwords_starting_with_form": 437,
+      "example_headword": "dá"
+    },
+    {
+      "text": "E",
+      "code_points": [
+        "U+0045"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER E"
+      ],
+      "headwords_starting_with_form": 3,
+      "example_headword": "Ebã́gi"
+    },
+    {
+      "text": "e",
+      "code_points": [
+        "U+0065"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E"
+      ],
+      "headwords_starting_with_form": 432,
+      "example_headword": "e"
+    },
+    {
+      "text": "F",
+      "code_points": [
+        "U+0046"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER F"
+      ],
+      "headwords_starting_with_form": 3,
+      "example_headword": "Fasàmãza"
+    },
+    {
+      "text": "f",
+      "code_points": [
+        "U+0066"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER F"
+      ],
+      "headwords_starting_with_form": 216,
+      "example_headword": "fá"
+    },
+    {
+      "text": "G",
+      "code_points": [
+        "U+0047"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER G"
+      ],
+      "headwords_starting_with_form": 4,
+      "example_headword": "Gãmbãri"
+    },
+    {
+      "text": "g",
+      "code_points": [
+        "U+0067"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER G"
+      ],
+      "headwords_starting_with_form": 717,
+      "example_headword": "gá"
+    },
+    {
+      "text": "h",
+      "code_points": [
+        "U+0068"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER H"
+      ],
+      "headwords_starting_with_form": 48,
+      "example_headword": "há"
+    },
+    {
+      "text": "i",
+      "code_points": [
+        "U+0069"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "imanì"
+    },
+    {
+      "text": "j",
+      "code_points": [
+        "U+006A"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER J"
+      ],
+      "headwords_starting_with_form": 278,
+      "example_headword": "jâm"
+    },
+    {
+      "text": "K",
+      "code_points": [
+        "U+004B"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER K"
+      ],
+      "headwords_starting_with_form": 14,
+      "example_headword": "Kaaba"
+    },
+    {
+      "text": "k",
+      "code_points": [
+        "U+006B"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER K"
+      ],
+      "headwords_starting_with_form": 1097,
+      "example_headword": "ká"
+    },
+    {
+      "text": "L",
+      "code_points": [
+        "U+004C"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER L"
+      ],
+      "headwords_starting_with_form": 12,
+      "example_headword": "Làlǔ"
+    },
+    {
+      "text": "l",
+      "code_points": [
+        "U+006C"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER L"
+      ],
+      "headwords_starting_with_form": 504,
+      "example_headword": "lá"
+    },
+    {
+      "text": "M",
+      "code_points": [
+        "U+004D"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER M"
+      ],
+      "headwords_starting_with_form": 18,
+      "example_headword": "Màdǐ"
+    },
+    {
+      "text": "m",
+      "code_points": [
+        "U+006D"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER M"
+      ],
+      "headwords_starting_with_form": 277,
+      "example_headword": "mábà"
+    },
+    {
+      "text": "N",
+      "code_points": [
+        "U+004E"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER N"
+      ],
+      "headwords_starting_with_form": 3,
+      "example_headword": "Ndǎ dàrì"
+    },
+    {
+      "text": "n",
+      "code_points": [
+        "U+006E"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N"
+      ],
+      "headwords_starting_with_form": 328,
+      "example_headword": "nǎ"
+    },
+    {
+      "text": "O",
+      "code_points": [
+        "U+004F"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER O"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "Okú"
+    },
+    {
+      "text": "o",
+      "code_points": [
+        "U+006F"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O"
+      ],
+      "headwords_starting_with_form": 7,
+      "example_headword": "o"
+    },
+    {
+      "text": "p",
+      "code_points": [
+        "U+0070"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER P"
+      ],
+      "headwords_starting_with_form": 167,
+      "example_headword": "pá"
+    },
+    {
+      "text": "R",
+      "code_points": [
+        "U+0052"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER R"
+      ],
+      "headwords_starting_with_form": 2,
+      "example_headword": "Ràmàdân"
+    },
+    {
+      "text": "r",
+      "code_points": [
+        "U+0072"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER R"
+      ],
+      "headwords_starting_with_form": 99,
+      "example_headword": "rábányí"
+    },
+    {
+      "text": "S",
+      "code_points": [
+        "U+0053"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER S"
+      ],
+      "headwords_starting_with_form": 46,
+      "example_headword": "Sabo"
+    },
+    {
+      "text": "s",
+      "code_points": [
+        "U+0073"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER S"
+      ],
+      "headwords_starting_with_form": 312,
+      "example_headword": "sá"
+    },
+    {
+      "text": "T",
+      "code_points": [
+        "U+0054"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER T"
+      ],
+      "headwords_starting_with_form": 16,
+      "example_headword": "Tákpà"
+    },
+    {
+      "text": "t",
+      "code_points": [
+        "U+0074"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER T"
+      ],
+      "headwords_starting_with_form": 670,
+      "example_headword": "tá"
+    },
+    {
+      "text": "U",
+      "code_points": [
+        "U+0055"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER U"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "Ubandómã̀"
+    },
+    {
+      "text": "u",
+      "code_points": [
+        "U+0075"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER U"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "u"
+    },
+    {
+      "text": "v",
+      "code_points": [
+        "U+0076"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER V"
+      ],
+      "headwords_starting_with_form": 50,
+      "example_headword": "va"
+    },
+    {
+      "text": "W",
+      "code_points": [
+        "U+0057"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER W"
+      ],
+      "headwords_starting_with_form": 4,
+      "example_headword": "Wáká tsùla"
+    },
+    {
+      "text": "w",
+      "code_points": [
+        "U+0077"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER W"
+      ],
+      "headwords_starting_with_form": 263,
+      "example_headword": "wfdákà"
+    },
+    {
+      "text": "Y",
+      "code_points": [
+        "U+0059"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER Y"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "Yàya"
+    },
+    {
+      "text": "y",
+      "code_points": [
+        "U+0079"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER Y"
+      ],
+      "headwords_starting_with_form": 275,
+      "example_headword": "yá"
+    },
+    {
+      "text": "Z",
+      "code_points": [
+        "U+005A"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER Z"
+      ],
+      "headwords_starting_with_form": 2,
+      "example_headword": "Zàbǎ"
+    },
+    {
+      "text": "z",
+      "code_points": [
+        "U+007A"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER Z"
+      ],
+      "headwords_starting_with_form": 127,
+      "example_headword": "za"
+    },
+    {
+      "text": "À",
+      "code_points": [
+        "U+00C0"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER A WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 2,
+      "example_headword": "Àgùdà"
+    },
+    {
+      "text": "à",
+      "code_points": [
+        "U+00E0"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 123,
+      "example_headword": "à"
+    },
+    {
+      "text": "á",
+      "code_points": [
+        "U+00E1"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH ACUTE"
+      ],
+      "headwords_starting_with_form": 47,
+      "example_headword": "á"
+    },
+    {
+      "text": "ã",
+      "code_points": [
+        "U+00E3"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH TILDE"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "ã"
+    },
+    {
+      "text": "ã̌",
+      "code_points": [
+        "U+00E3",
+        "U+030C"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH TILDE",
+        "COMBINING CARON"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "ã̌"
+    },
+    {
+      "text": "È",
+      "code_points": [
+        "U+00C8"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER E WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 4,
+      "example_headword": "Èdègi"
+    },
+    {
+      "text": "è",
+      "code_points": [
+        "U+00E8"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 360,
+      "example_headword": "è"
+    },
+    {
+      "text": "é",
+      "code_points": [
+        "U+00E9"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER E WITH ACUTE"
+      ],
+      "headwords_starting_with_form": 2,
+      "example_headword": "éyã̀n"
+    },
+    {
+      "text": "Ì",
+      "code_points": [
+        "U+00CC"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER I WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "Ìnjil(a)"
+    },
+    {
+      "text": "ì",
+      "code_points": [
+        "U+00EC"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER I WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 2,
+      "example_headword": "ìbǎda"
+    },
+    {
+      "text": "ò",
+      "code_points": [
+        "U+00F2"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER O WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "ò"
+    },
+    {
+      "text": "Ù",
+      "code_points": [
+        "U+00D9"
+      ],
+      "unicode_names": [
+        "LATIN CAPITAL LETTER U WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 1,
+      "example_headword": "Ùbandawaki"
+    },
+    {
+      "text": "ń",
+      "code_points": [
+        "U+0144"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N WITH ACUTE"
+      ],
+      "headwords_starting_with_form": 4,
+      "example_headword": "ńdò"
+    },
+    {
+      "text": "ǎ",
+      "code_points": [
+        "U+01CE"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER A WITH CARON"
+      ],
+      "headwords_starting_with_form": 2,
+      "example_headword": "ǎ"
+    },
+    {
+      "text": "ǹ",
+      "code_points": [
+        "U+01F9"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER N WITH GRAVE"
+      ],
+      "headwords_starting_with_form": 12,
+      "example_headword": "ǹnã́"
+    },
+    {
+      "text": "ʃ",
+      "code_points": [
+        "U+0283"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER ESH"
+      ],
+      "headwords_starting_with_form": 143,
+      "example_headword": "ʃé"
+    },
+    {
+      "text": "ʒ",
+      "code_points": [
+        "U+0292"
+      ],
+      "unicode_names": [
+        "LATIN SMALL LETTER EZH"
+      ],
+      "headwords_starting_with_form": 68,
+      "example_headword": "ʒe"
+    }
+  ],
+  "malformed_lines": []
+}

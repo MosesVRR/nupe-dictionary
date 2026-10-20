@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
 interface Sense {
   part_of_speech: string | null
@@ -41,6 +41,78 @@ interface DictionaryEntry {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const PAGE_SIZE = 50
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+
+interface KeyboardForm {
+  text: string
+  code_points: string[]
+  kind: string
+  occurrences: number
+  headwords_containing_form: number
+  example_headword: string
+}
+
+const searchInput = ref<HTMLInputElement | null>(null)
+const keyboardForms = ref<KeyboardForm[]>([])
+const keyboardOpen = ref(false)
+const keyboardLoadError = ref('')
+const cursorStart = ref(0)
+const cursorEnd = ref(0)
+
+const basicKeyboardForms = computed(() =>
+  keyboardForms.value.filter((form) => form.kind === 'basic_letter'),
+)
+const specialKeyboardForms = computed(() =>
+  keyboardForms.value.filter((form) => form.kind !== 'basic_letter'),
+)
+
+onMounted(async () => {
+  try {
+    const response = await fetch(`${import.meta.env.BASE_URL}data/app_character_config.json`)
+    if (!response.ok) {
+      throw new Error(`Could not load character configuration (HTTP ${response.status}).`)
+    }
+    const config: { keyboard_forms?: KeyboardForm[] } = await response.json()
+    if (!Array.isArray(config.keyboard_forms)) {
+      throw new Error('The character configuration has an unexpected format.')
+    }
+
+    // Keep lowercase forms for the first version; uppercase headwords remain in
+    // the generated source config but are not shown as separate keyboard keys.
+    keyboardForms.value = config.keyboard_forms.filter(
+      (form) => form.text === form.text.toLocaleLowerCase(),
+    )
+  } catch (error: unknown) {
+    keyboardLoadError.value =
+      error instanceof Error ? error.message : 'Could not load character configuration.'
+    console.error('Character keyboard configuration failed to load:', error)
+  }
+})
+
+function rememberCursor() {
+  const input = searchInput.value
+  if (!input) return
+  cursorStart.value = input.selectionStart ?? searchQuery.value.length
+  cursorEnd.value = input.selectionEnd ?? cursorStart.value
+}
+
+async function insertKeyboardForm(form: string) {
+  const input = searchInput.value
+  const value = searchQuery.value
+  const start = input?.selectionStart ?? cursorStart.value ?? value.length
+  const end = input?.selectionEnd ?? cursorEnd.value ?? start
+
+  searchQuery.value = `${value.slice(0, start)}${form}${value.slice(end)}`
+  const nextCursor = start + form.length
+  cursorStart.value = nextCursor
+  cursorEnd.value = nextCursor
+  scheduleSuggestions()
+
+  await nextTick()
+  if (searchInput.value) {
+    searchInput.value.focus()
+    searchInput.value.setSelectionRange(nextCursor, nextCursor)
+  }
+}
 
 const searchQuery = ref('')
 const suggestions = ref<string[]>([])
@@ -263,6 +335,7 @@ function goToNextPage() {
           <div class="search-control">
             <input
               id="search"
+              ref="searchInput"
               v-model="searchQuery"
               type="search"
               placeholder="Type a Nupe word, with or without diacritics..."
@@ -272,6 +345,9 @@ function goToNextPage() {
               aria-controls="search-suggestions"
               :aria-expanded="suggestionsOpen"
               @input="scheduleSuggestions"
+              @click="rememberCursor"
+              @keyup="rememberCursor"
+              @select="rememberCursor"
               @focus="suggestionsOpen = suggestions.length > 0"
               @keydown.esc="suggestionsOpen = false"
             />
@@ -303,6 +379,72 @@ function goToNextPage() {
           Search for a complete word or part of a word. Diacritics are optional
           for searching; results retain the dictionary's original spelling.
         </p>
+
+        <section class="character-keyboard" aria-label="Nupe character keyboard">
+          <div class="keyboard-heading">
+            <div>
+              <h2>Nupe character keyboard</h2>
+              <p>Insert observed Nupe character forms at the cursor in the search field.</p>
+            </div>
+            <button
+              type="button"
+              class="keyboard-toggle"
+              :aria-expanded="keyboardOpen"
+              :disabled="loading"
+              @click="keyboardOpen = !keyboardOpen"
+            >
+              {{ keyboardOpen ? 'Hide keys' : 'Show keys' }}
+            </button>
+          </div>
+
+          <p v-if="keyboardLoadError" class="keyboard-error" role="status">
+            Character keys could not be loaded. Make sure
+            <code>public/data/app_character_config.json</code> exists in the frontend.
+          </p>
+
+          <div v-if="keyboardOpen && keyboardForms.length > 0" class="keyboard-keys">
+            <div v-if="specialKeyboardForms.length > 0" class="keyboard-group">
+              <h3>Special letters and diacritics</h3>
+              <div class="key-grid">
+                <button
+                  v-for="form in specialKeyboardForms"
+                  :key="form.text"
+                  type="button"
+                  class="character-key"
+                  :title="`${form.code_points.join(' + ')} · found ${form.occurrences} times`"
+                  :aria-label="`Insert ${form.text}`"
+                  :disabled="loading"
+                  @mousedown.prevent
+                  @click="insertKeyboardForm(form.text)"
+                >
+                  {{ form.text }}
+                </button>
+              </div>
+            </div>
+
+            <div v-if="basicKeyboardForms.length > 0" class="keyboard-group">
+              <h3>Basic letters found in the dictionary</h3>
+              <div class="key-grid">
+                <button
+                  v-for="form in basicKeyboardForms"
+                  :key="form.text"
+                  type="button"
+                  class="character-key basic-character-key"
+                  :title="`Found ${form.occurrences} times`"
+                  :aria-label="`Insert ${form.text}`"
+                  :disabled="loading"
+                  @mousedown.prevent
+                  @click="insertKeyboardForm(form.text)"
+                >
+                  {{ form.text }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <p v-else-if="keyboardOpen && !keyboardLoadError" class="hint">
+            Loading character keys…
+          </p>
+        </section>
       </form>
 
       <div class="browse-panel">
@@ -478,6 +620,19 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .search-input button, .browse-all { padding: 0 23px; color: #fff; background: #315e49; border: 0; border-radius: 9px; cursor: pointer; font-weight: 650; }
 .search-input button:hover:not(:disabled), .browse-all:hover:not(:disabled) { background: #244b39; }
 .hint, .status { margin: 12px 0 0; color: #65716a; font-size: 0.9rem; line-height: 1.6; }
+.character-keyboard { margin-top: 18px; padding-top: 17px; border-top: 1px solid #e8ece7; }
+.keyboard-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.keyboard-heading h2 { margin: 0 0 5px; font-size: 1rem; }
+.keyboard-heading p { margin: 0; color: #65716a; font-size: 0.86rem; line-height: 1.5; }
+.keyboard-toggle { flex-shrink: 0; min-height: 38px; padding: 0 13px; color: #315e49; background: #f7f8f5; border: 1px solid #dce5dc; border-radius: 8px; cursor: pointer; font-weight: 650; }
+.keyboard-toggle:hover:not(:disabled) { background: #eaf1e9; }
+.keyboard-keys { display: grid; gap: 17px; margin-top: 18px; }
+.keyboard-group h3 { margin: 0 0 9px; color: #65716a; font-size: 0.8rem; font-weight: 700; }
+.key-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.character-key { min-width: 39px; min-height: 40px; padding: 6px 10px; color: #203b2d; background: #f1f6f0; border: 1px solid #d3e1d2; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 650; }
+.character-key:hover:not(:disabled), .character-key:focus-visible { background: #deecdf; border-color: #83a98b; }
+.basic-character-key { min-width: 36px; color: #315e49; background: #fff; }
+.keyboard-error { margin: 12px 0 0; color: #a43d31; font-size: 0.86rem; line-height: 1.5; }
 .browse-panel { margin-top: 25px; padding-top: 22px; border-top: 1px solid #e8ece7; }
 .browse-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .browse-heading h2 { margin: 0 0 5px; font-size: 1.05rem; }
@@ -530,6 +685,9 @@ footer { padding: 24px 0 35px; color: #65716a; text-align: center; font-size: 0.
   .search-section { padding: 20px; }
   .search-input { flex-direction: column; }\n  .search-control { width: 100%; }
   .search-input button { min-height: 46px; }
+  .keyboard-heading { align-items: flex-start; flex-direction: column; }
+  .keyboard-toggle { min-height: 42px; }
+  .character-key { min-width: 42px; min-height: 42px; }
   .browse-heading { align-items: flex-start; flex-direction: column; }
   .browse-all { min-height: 42px; }
   .entry-card { padding: 18px; }
