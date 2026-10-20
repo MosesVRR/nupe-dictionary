@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import CategoryCodeReference from './components/CategoryCodeReference.vue'
 import { getCategoryMeaning } from './data/categoryCodes'
+import DictionaryReadingGuide from './components/DictionaryReadingGuide.vue'
 
 interface Sense {
   part_of_speech: string | null
@@ -129,6 +130,7 @@ const resultCount = ref(0)
 
 const browseMode = ref(false)
 const categoryReferenceOpen = ref(false)
+const readingGuideOpen = ref(false)
 const selectedLetter = ref('all')
 const browseOffset = ref(0)
 const browseTotal = ref(0)
@@ -481,6 +483,24 @@ function goToNextPage() {
         </div>
       </div>
 
+      <section class="category-reference-panel reading-guide-panel">
+        <div class="browse-heading">
+          <div>
+            <h2>How to use this dictionary</h2>
+            <p>Learn about entries, Nupe spelling, tones, diacritics, and category codes.</p>
+          </div>
+          <button
+            class="browse-all"
+            type="button"
+            :aria-expanded="readingGuideOpen"
+            @click="readingGuideOpen = !readingGuideOpen"
+          >
+            {{ readingGuideOpen ? 'Hide reading guide' : 'Read the guide' }}
+          </button>
+        </div>
+        <DictionaryReadingGuide v-if="readingGuideOpen" />
+      </section>
+
       <section class="category-reference-panel">
         <div class="browse-heading">
           <div>
@@ -646,7 +666,7 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .hint, .status { margin: 12px 0 0; color: #65716a; font-size: 0.9rem; line-height: 1.6; }
 .character-keyboard { margin-top: 18px; padding-top: 17px; border-top: 1px solid #e8ece7; }
 .keyboard-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.keyboard-heading h2 { margin: 0 0 5px; font-size: 1rem; }
+.keyboard-heading h2 { margin: 0 0 6px; color: #1f3328; font-size: 1.08rem; font-weight: 750; line-height: 1.35; letter-spacing: -0.015em; }
 .keyboard-heading p { margin: 0; color: #65716a; font-size: 0.86rem; line-height: 1.5; }
 .keyboard-toggle { flex-shrink: 0; min-height: 38px; padding: 0 13px; color: #315e49; background: #f7f8f5; border: 1px solid #dce5dc; border-radius: 8px; cursor: pointer; font-weight: 650; }
 .keyboard-toggle:hover:not(:disabled) { background: #eaf1e9; }
@@ -657,9 +677,10 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .character-key:hover:not(:disabled), .character-key:focus-visible { background: #deecdf; border-color: #83a98b; }
 .basic-character-key { min-width: 36px; color: #315e49; background: #fff; }
 .keyboard-error { margin: 12px 0 0; color: #a43d31; font-size: 0.86rem; line-height: 1.5; }
-.category-reference-panel { margin-top: 22px; padding-top: 22px; border-top: 1px solid #e8ece7; }\n.browse-panel { margin-top: 25px; padding-top: 22px; border-top: 1px solid #e8ece7; }
+.category-reference-panel { margin-top: 22px; padding-top: 22px; border-top: 1px solid #e8ece7; }
+.browse-panel { margin-top: 25px; padding-top: 22px; border-top: 1px solid #e8ece7; }
 .browse-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.browse-heading h2 { margin: 0 0 5px; font-size: 1.05rem; }
+.browse-heading h2 { margin: 0 0 6px; color: #1f3328; font-size: 1.12rem; font-weight: 750; line-height: 1.35; letter-spacing: -0.015em; }
 .browse-heading p { margin: 0; color: #65716a; font-size: 0.88rem; line-height: 1.5; }
 .browse-all { min-height: 40px; white-space: nowrap; }
 .alphabet { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
