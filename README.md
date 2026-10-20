@@ -1,156 +1,105 @@
-# Nupe Dictionary
+# NupeDictionary
 
-A web application for searching and exploring Nupe vocabulary and
-English definitions. The project combines a Vue frontend, a FastAPI
-backend, and a SQLite database built from a digitized Nupe--English
-dictionary.
+**NupeDictionary** is a web application for searching and exploring Nupe vocabulary and English definitions, with tools designed to make Nupe spelling and diacritics easier to work with.
 
-> **Project status:** Early development. The application can query
-> dictionary entries through the frontend. Search improvements are being
-> introduced and should be tested against the current database before
-> being considered verified.
+- **Live dictionary:** https://nupe-dictionary.vercel.app/
+- **Support the project:** https://buymeacoffee.com/mosesvrr
 
-## Contents
+NupeDictionary combines a Vue frontend, a FastAPI backend, and a SQLite database built from digitized dictionary records. The application aims to make the dictionary easier to search and explore while preserving the spellings and diacritics represented in the source data.
 
--   [Project goals](#project-goals)
--   [Technology stack](#technology-stack)
--   [Project structure](#project-structure)
--   [Current functionality](#current-functionality)
--   [Getting started](#getting-started)
--   [API](#api)
--   [Known issues and planned work](#known-issues-and-planned-work)
--   [Dictionary data and source
-    files](#dictionary-data-and-source-files)
--   [Development notes](#development-notes)
+> **Data note:** The underlying dictionary source is marked as a draft prepared for comment. Some entries, spellings, tone marks, and definitions may require verification against the source. Please report suspected errors rather than assuming every record is definitive.
 
-## Project goals
+## Features
 
-The goal is to make Nupe vocabulary more accessible through a
-searchable, readable web dictionary. The application should preserve
-Nupe spelling and diacritics, show English definitions and related entry
-information, and make it easier for users to discover words even when
-they do not know the exact spelling.
+- Search Nupe headwords and available English definitions.
+- Search with exact diacritics, partial spellings, and queries that omit diacritic marks.
+- Use search suggestions to discover possible headwords.
+- Browse dictionary entries alphabetically.
+- Use the Nupe character keyboard to enter characters and diacritic combinations that may be difficult to type.
+- Consult a reading guide covering entry structure, spelling, tones and diacritics, character input, and category codes.
+- Look up dictionary category codes in a searchable reference.
+- View available parts of speech, alternative spellings, additional information, and printed source-page references.
+- Access dictionary search results through a JSON API.
+
+Search normalization is used for comparison; it should not change the displayed source spelling. Because removing diacritics can make distinct spellings look alike, a diacritic-insensitive query may return multiple candidates.
 
 ## Technology stack
 
--   **Frontend:** Vue 3, TypeScript, Vite
--   **Backend:** Python, FastAPI
--   **Database:** SQLite
--   **API style:** JSON over HTTP
+- **Frontend:** Vue 3, TypeScript, Vite
+- **Backend:** Python, FastAPI
+- **Database:** SQLite
+- **API:** JSON over HTTP
+- **Deployment:** Vercel (frontend) and Render (backend)
 
 ## Project structure
 
-The main application structure is:
+The repository layout may vary by branch. The main application components include:
 
-``` text
+```text
 nupe-dictionary/
 ├── backend/
 │   └── main.py
 ├── frontend/
 │   └── src/
-│       └── App.vue
-├── data/
-│   └── nupe_dictionary.sqlite3
-└── README.md
+│       ├── App.vue
+│       └── components/
+├── README.md
+└── ...
 ```
 
-The exact frontend structure may include additional Vite configuration,
-package files, components, and assets not shown above.
-
-The SQLite database is read-only from the API's perspective. The backend
-opens it in SQLite read-only mode and does not modify dictionary records
-during searches.
-
-## Current functionality
-
--   Search for dictionary entries through the web interface.
--   Retrieve entries from SQLite through the FastAPI backend.
--   Display headwords and available English definitions.
--   Display parts of speech, category codes, alternative spellings,
-    additional information, and printed source-page references when
-    present.
--   Return JSON search results from the `/api/search` endpoint.
--   Support local development with the Vue/Vite frontend and FastAPI
-    backend.
-
-The current search implementation is intended to support: - Exact
-headword and alternative-spelling matches. - Searches that omit
-diacritic marks. - Partial-word matching. - Ranking exact matches ahead
-of broader matches.
-
-**Verification note:** test the search behaviours above against the
-actual database after installing changes. Diacritic-insensitive matching
-can return more than one candidate, because removing diacritics for
-comparison may cause distinct spellings to normalize to the same search
-form. Displayed dictionary spellings should remain unchanged.
+The backend reads dictionary records from SQLite and exposes them through the API. Search requests should not modify dictionary records.
 
 ## Getting started
 
-These instructions assume Python and Node.js are installed. Run commands
-from the appropriate project directories.
+These instructions are a general local-development outline. Use the dependency files and scripts committed in the current branch as the source of truth.
+
+### Prerequisites
+
+- Python
+- Node.js and npm
+- The project's backend dependencies and local dictionary database, where permitted and available
 
 ### 1. Start the backend
 
-From the repository root, create and activate a Python virtual
-environment if you do not already have one.
+From the repository root, create and activate a virtual environment:
 
-Windows PowerShell:
+**Windows PowerShell**
 
-``` powershell
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-Install the backend dependencies:
+Install dependencies using the requirements file in the repository. If it is located at `backend/requirements.txt`, run:
 
-``` powershell
+```powershell
 pip install -r backend/requirements.txt
 ```
 
-If the project keeps `requirements.txt` inside `backend/`, run the
-command from that directory instead:
+Start the API from the directory containing `main.py`. For example, if `main.py` is inside `backend/`:
 
-``` powershell
+```powershell
 cd backend
-pip install -r requirements.txt
-```
-
-Start FastAPI from the directory containing `main.py`:
-
-``` powershell
 uvicorn main:app --reload
 ```
 
-The API should be available at `http://127.0.0.1:8000`. Interactive API
-documentation is available at `http://127.0.0.1:8000/docs`.
+The API is typically available at `http://127.0.0.1:8000`, with interactive documentation at `http://127.0.0.1:8000/docs`.
 
-The backend expects the database at:
-
-``` text
-data/nupe_dictionary.sqlite3
-```
-
-The path is resolved relative to the repository layout in
-`backend/main.py`.
+The backend must be configured to find the local SQLite database. Check the path and configuration in the current backend code before running it.
 
 ### 2. Start the frontend
 
-Open a second terminal and change to the frontend directory:
+Open a second terminal:
 
-``` powershell
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-Vite will print the local URL, commonly `http://localhost:5173`.
+Vite prints the local development URL, commonly `http://localhost:5173`.
 
-The backend CORS configuration currently allows the Vite development
-origins `http://localhost:5173` and `http://127.0.0.1:5173`.
-
-> **Dependency note:** use the project's existing dependency files and
-> scripts as the source of truth. If your repository has a different
-> requirements-file location or npm script, follow those project files.
+Configure the frontend API base URL and backend CORS settings as required by the current environment. Do not commit secrets or private environment files.
 
 ## API
 
@@ -160,128 +109,78 @@ Returns basic API information.
 
 ### `GET /api/search?q=<query>`
 
-Searches the dictionary and returns a JSON response containing the
-original query, result count, and matching entries.
+Searches dictionary entries and returns a JSON response with the query, result count, and matching entries. The maximum result count and response fields are defined by the deployed backend; consult the interactive API documentation for the current schema.
 
-Example:
+A result may include fields such as:
 
-``` text
+- `headword`
+- `source_printed_page`
+- `senses`
+  - `sense_order`
+  - `part_of_speech`
+  - `definition_en`
+  - `category_code`
+- `alternative_spellings`
+- `additional_information`
+
+Example local request:
+
+```text
 http://127.0.0.1:8000/api/search?q=fako
 ```
 
-The exact results depend on the contents of the local SQLite database.
-The endpoint limits responses to 50 entries.
+Exact results depend on the dictionary database and current search implementation.
 
-A result can include:
+## Dictionary data, source, and attribution
 
--   `headword`
--   `source_printed_page`
--   `senses`
-    -   `sense_order`
-    -   `part_of_speech`
-    -   `definition_en`
-    -   `category_code`
--   `alternative_spellings`
--   `additional_information`
+The database was derived from a scanned Nupe–English dictionary attributed to R. M. Blench and marked **“Draft — prepared for comment only”** (dated August 5, 2009). The source document discusses Nupe spelling, sounds, tones, and category codes, but it also cautions that some words may lack tone marks.
 
-## Known issues and planned work
+The application and the underlying dictionary content may have different rights. **Confirm permission to redistribute the source material and derived dictionary data before publishing the database, scans, or extracted records.** Keep restricted source files and data out of public version control until those rights are clear.
 
-Use this section as a living checklist. Add issues as they are
-discovered, and check items off only after the fix has been implemented
-and verified.
+The source and extracted records may contain errors introduced during scanning, OCR, transcription, or structuring. Changes to entries should be checked against the source where possible, and uncertain corrections should be documented.
 
-### Data modelling and dictionary content
+## Reporting corrections and bugs
 
--   [ ] **Connecting entries are currently stored as unique entries.**
-    Some entries that function as connecting entries or cross-references
-    to another headword are currently represented as independent entries
-    or alternative spellings. Review the source dictionary and data
-    model to decide how these should be represented, linked, and
-    displayed.
--   [ ] Review cross-references such as `cf.` references and ensure they
-    point to the intended headword.
--   [ ] Review entries with multiple senses, alternative spellings, or
-    additional information to ensure the data model preserves their
-    relationships.
--   [ ] Continue checking corrected page-boundary entries against the
-    scanned source where uncertainty remains.
--   [ ] Decide how to represent non-textual source information, such as
-    photographs or illustrations associated with entries.
+If you find a spelling, diacritic, definition, category code, or cross-reference that may be incorrect, please report it through the repository's issue tracker if issues are enabled.
 
-### Search
+Helpful reports include:
 
--   [ ] Test diacritic-insensitive search with real Nupe examples,
-    including cases where different words may normalize to the same
-    unaccented spelling.
--   [ ] Confirm that exact headword matches rank above normalized,
-    prefix, and substring matches.
--   [ ] Test alternative-spelling search, including spellings with and
-    without diacritics.
--   [ ] Decide whether English-definition search should be supported.
--   [ ] Consider keyboard-friendly suggestions or live search as the
-    interface evolves.
--   [ ] Evaluate search performance on the full dataset and add indexes
-    or a dedicated search approach if needed.
+- The headword as displayed
+- The suspected correction
+- The relevant printed source page, if known
+- A screenshot or short explanation, where useful
 
-### User interface and accessibility
+For software bugs, include the steps to reproduce the problem, what you expected to happen, and what happened instead. Avoid including private information in issue reports.
 
--   [ ] Test the layout on mobile and desktop screen sizes.
--   [ ] Review keyboard navigation, focus indicators, labels, and
-    screen-reader announcements.
--   [ ] Consider a dedicated entry page with a shareable URL for each
-    headword.
--   [ ] Consider alphabetical browsing and pagination for exploring the
-    dictionary without a known query.
--   [ ] Improve the presentation of cross-references and linked entries
-    once the data model supports them.
+## Development and data quality
 
-### Data quality and testing
+When changing the application:
 
--   [ ] Add automated tests for the API's matching and result-ranking
-    behaviour.
--   [ ] Add checks for JSON/database import integrity and duplicate or
-    conflicting headwords.
--   [ ] Verify the number of entries and sample corrected records after
-    each database refresh.
--   [ ] Add regression tests for Nupe diacritics and Unicode
-    normalization.
--   [ ] Confirm that missing definitions, empty fields, and entries with
-    multiple senses render gracefully.
+- Preserve source headwords, definitions, and diacritics in their original form.
+- Use normalization for search comparisons only; do not silently rewrite stored spellings.
+- Test exact-diacritic, unaccented, prefix, substring, and alternative-spelling queries.
+- Check that exact matches rank appropriately and that broad queries do not hide useful exact matches behind result limits.
+- Test entries with multiple senses, missing definitions, alternative spellings, and additional information.
+- Verify data-import changes against the source and check for duplicate or malformed records.
+- Update the database-generation process, schema, and API together when the data model changes.
+- Check desktop and mobile layouts, keyboard navigation, focus visibility, and accessible labels when changing the UI.
 
-### Deployment and project maintenance
+## Known limitations and future work
 
--   [ ] Define a production deployment configuration for the frontend
-    and backend.
--   [ ] Configure production CORS origins rather than relying on local
-    development origins.
--   [ ] Document how the SQLite database is generated and updated from
-    the master dictionary data.
--   [ ] Add a repeatable setup and test process for new contributors.
+Dictionary data quality remains an ongoing process. Possible areas for future improvement include:
 
-## Dictionary data and source files
+- Reviewing cross-references such as `cf.` references and connecting entries.
+- Checking uncertain spellings, tones, diacritics, and page-boundary records against the scans.
+- Improving automated regression tests for Unicode normalization and search ranking.
+- Adding more contributor guidance for dictionary corrections and data review.
+- Reviewing the representation of illustrations or other non-textual information in the source, if relevant and permitted.
 
-The database is derived from a scanned Nupe--English dictionary that was
-processed into structured records and reviewed for extraction and
-page-boundary issues.
+Only mark a limitation as resolved after the relevant data or behaviour has been checked and verified.
 
-Keep the database and source material out of public version control
-until the rights to redistribute the dictionary content have been
-confirmed. The project repository is intended to remain private while
-this is unresolved. Check `.gitignore` before committing and ensure
-database files, source scans, credentials, and other restricted material
-are not accidentally included.
+## Support
 
-Do not commit API keys or other secrets. Use local environment
-configuration for secrets if they are required by future tooling.
+NupeDictionary is intended to make Nupe vocabulary more accessible and easier to explore. If you find it useful and would like to support ongoing development, you can contribute through **[Buy Me a Coffee](https://buymeacoffee.com/mosesvrr)**. Support is optional; the dictionary remains available to use online.
 
-## Development notes
+---
 
--   Treat the original Nupe headword, diacritics, and definitions as
-    source data. Search normalization should be used for comparison
-    only; it must not rewrite stored spellings.
--   When changing the database schema, update the data-generation/import
-    process and the API together.
--   For changes to search, test both exact spellings and unaccented
-    queries.
--   Keep a record of known data issues here so that they can be resolved
-    systematically rather than silently changing source entries.
+*NupeDictionary is a work in progress. Please treat dictionary entries as a resource for exploration and learning, and verify uncertain information with knowledgeable Nupe speakers or reliable source material.*

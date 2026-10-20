@@ -626,6 +626,23 @@ function goToNextPage() {
 
     <footer>
       <p>Nupe Dictionary · A project to make Nupe vocabulary more accessible.</p>
+      <div class="support-project">
+        <p class="support-title">Support NupeDictionary</p>
+        <p>
+          Help support the continued development, improvement, and preservation
+          of the Nupe language through this dictionary.
+        </p>
+        <a
+          class="support-link"
+          href="https://buymeacoffee.com/mosesvrr"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Support NupeDictionary on Buy Me a Coffee (opens in a new tab)"
+        >
+          <span aria-hidden="true">☕</span>
+          Buy Me a Coffee
+        </a>
+      </div>
     </footer>
   </main>
 </template>
@@ -738,6 +755,13 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .additional-section li { padding-left: 4px; margin-bottom: 8px; }
 .additional-section li:last-child { margin-bottom: 0; }
 footer { padding: 24px 0 35px; color: #65716a; text-align: center; font-size: 0.82rem; line-height: 1.6; }
+.support-project { max-width: 520px; margin: 22px auto 0; padding: 20px 22px; background: #fff; border: 1px solid #e0e7df; border-radius: 14px; }
+.support-project p { margin: 0; }
+.support-project .support-title { margin-bottom: 6px; color: #203b2d; font-size: 1rem; font-weight: 750; }
+.support-project p:not(.support-title) { color: #65716a; font-size: 0.88rem; }
+.support-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; margin-top: 14px; padding: 0 18px; color: #fff; background: #315e49; border-radius: 9px; text-decoration: none; font-size: 0.9rem; font-weight: 700; transition: background 150ms ease, transform 150ms ease; }
+.support-link:hover { background: #244b39; transform: translateY(-1px); }
+.support-link:focus-visible { outline: 3px solid #8ab49a; outline-offset: 3px; }
 @media (max-width: 520px) {
   .header { padding-top: 48px; }
   .search-section { padding: 20px; }
