@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NupeDictionary</string>
+    <string name="title_activity_main">NupeDictionary</string>
+    <string name="package_name">org.nupedictionary.app</string>
+    <string name="custom_url_scheme">org.nupedictionary.app</string>
+</resources>
