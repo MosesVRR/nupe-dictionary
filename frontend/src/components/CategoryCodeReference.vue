@@ -17,7 +17,6 @@ const filteredCodes = computed(() => {
 <template>
   <section class="category-code-reference" aria-labelledby="category-code-title">
     <header class="reference-header">
-      <h2 id="category-code-title">Dictionary category codes</h2>
       <p>
         These codes identify subject categories used in the dictionary's third column.
         The definitions below are transcribed from the introductory material of the
