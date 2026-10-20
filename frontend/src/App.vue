@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
+import CategoryCodeReference from './components/CategoryCodeReference.vue'
+import { getCategoryMeaning } from './data/categoryCodes'
 
 interface Sense {
   part_of_speech: string | null
@@ -126,6 +128,7 @@ const hasSearched = ref(false)
 const resultCount = ref(0)
 
 const browseMode = ref(false)
+const categoryReferenceOpen = ref(false)
 const selectedLetter = ref('all')
 const browseOffset = ref(0)
 const browseTotal = ref(0)
@@ -477,6 +480,24 @@ function goToNextPage() {
           </button>
         </div>
       </div>
+
+      <section class="category-reference-panel">
+        <div class="browse-heading">
+          <div>
+            <h2>Dictionary category codes</h2>
+            <p>Look up the subject codes used in dictionary entries.</p>
+          </div>
+          <button
+            class="browse-all"
+            type="button"
+            :aria-expanded="categoryReferenceOpen"
+            @click="categoryReferenceOpen = !categoryReferenceOpen"
+          >
+            {{ categoryReferenceOpen ? 'Hide code reference' : 'Explore category codes' }}
+          </button>
+        </div>
+        <CategoryCodeReference v-if="categoryReferenceOpen" />
+      </section>
     </section>
 
     <section class="results" aria-live="polite" :aria-busy="loading">
@@ -550,6 +571,9 @@ function goToNextPage() {
                   </span>
                   <span v-if="sense.category_code" class="category">
                     Code: {{ sense.category_code }}
+                    <template v-if="getCategoryMeaning(sense.category_code)">
+                      — {{ getCategoryMeaning(sense.category_code) }}
+                    </template>
                   </span>
                 </div>
                 <p>{{ sense.definition_en }}</p>
@@ -633,7 +657,7 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .character-key:hover:not(:disabled), .character-key:focus-visible { background: #deecdf; border-color: #83a98b; }
 .basic-character-key { min-width: 36px; color: #315e49; background: #fff; }
 .keyboard-error { margin: 12px 0 0; color: #a43d31; font-size: 0.86rem; line-height: 1.5; }
-.browse-panel { margin-top: 25px; padding-top: 22px; border-top: 1px solid #e8ece7; }
+.category-reference-panel { margin-top: 22px; padding-top: 22px; border-top: 1px solid #e8ece7; }\n.browse-panel { margin-top: 25px; padding-top: 22px; border-top: 1px solid #e8ece7; }
 .browse-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .browse-heading h2 { margin: 0 0 5px; font-size: 1.05rem; }
 .browse-heading p { margin: 0; color: #65716a; font-size: 0.88rem; line-height: 1.5; }
@@ -674,7 +698,20 @@ h1 { margin: 12px 0 8px; color: #202b27; font-size: clamp(2.2rem, 5vw, 3.2rem); 
 .definitions p { margin: 7px 0 0; white-space: normal; overflow-wrap: anywhere; font-size: 1rem; }
 .sense-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
 .part-of-speech { display: inline-block; padding: 3px 8px; color: #315e49; background: #edf4ee; border-radius: 5px; font-size: 0.78rem; font-weight: 650; font-style: italic; }
-.category { display: inline-block; color: #65716a; font-size: 0.78rem; }
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid #8aaf96;
+  border-radius: 6px;
+  background: #e7f4e9;
+  color: #174d2a;
+  font-weight: 650;
+  line-height: 1.4;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
 .additional-section { padding-top: 17px; border-top: 1px solid #edf0ec; }
 .additional-section ul { margin: 0; padding-left: 22px; }
 .additional-section li { padding-left: 4px; margin-bottom: 8px; }
