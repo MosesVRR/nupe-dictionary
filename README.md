@@ -5,6 +5,21 @@
 - **Live dictionary:** https://nupe-dictionary.vercel.app/
 - **Support the project:** https://buymeacoffee.com/mosesvrr
 
+## Download NupeDictionary for Android
+
+**[Download the latest Android APK]([https://drive.google.com/file/d/1mdmOJnZj4MF-YrWUGjm6-OXGPNqkj3VF/view?usp=drive_link])**
+
+NupeDictionary is available as a free Android app. Download the APK to your Android device and install it directly without using Google Play.
+
+**Installation instructions:**
+1. Open the download link on your Android device.
+2. Download the APK file.
+3. Open the downloaded file and follow the installation prompts.
+4. If prompted, allow installation from that source in your Android settings.
+
+> **Note:** This download is for Android devices only. NupeDictionary is not currently available as a native iOS app.
+
+
 NupeDictionary combines a Vue frontend, a FastAPI backend, and a SQLite database built from digitized dictionary records. The application aims to make the dictionary easier to search and explore while preserving the spellings and diacritics represented in the source data.
 
 > **Data note:** The underlying dictionary source is marked as a draft prepared for comment. Some entries, spellings, tone marks, and definitions may require verification against the source. Please report suspected errors rather than assuming every record is definitive.
