@@ -1,15 +1,20 @@
 # NupeDictionary
 
-**NupeDictionary** is a web application for searching and exploring Nupe vocabulary and English definitions, with tools designed to make Nupe spelling and diacritics easier to work with.
+**NupeDictionary** is a free application for searching and exploring Nupe vocabulary and English definitions, with tools designed to make Nupe spelling and diacritics easier to work with.
 
 - **Live dictionary:** https://nupe-dictionary.vercel.app/
 - **Support the project:** https://buymeacoffee.com/mosesvrr
+- **Android:** Direct APK distribution; Google Play is not required.
 
-NupeDictionary combines a Vue frontend, a FastAPI backend, and a SQLite database built from digitized dictionary records. The application aims to make the dictionary easier to search and explore while preserving the spellings and diacritics represented in the source data.
+NupeDictionary combines a Vue frontend, a FastAPI backend, and a SQLite database built from digitized dictionary records. The Android application uses Capacitor to package the frontend for installation on Android devices.
+
+The project aims to make Nupe vocabulary easier to search and explore while preserving the spellings and diacritics represented in the source data.
 
 > **Data note:** The underlying dictionary source is marked as a draft prepared for comment. Some entries, spellings, tone marks, and definitions may require verification against the source. Please report suspected errors rather than assuming every record is definitive.
 
 ## Features
+
+### Dictionary
 
 - Search Nupe headwords and available English definitions.
 - Search with exact diacritics, partial spellings, and queries that omit diacritic marks.
@@ -21,15 +26,32 @@ NupeDictionary combines a Vue frontend, a FastAPI backend, and a SQLite database
 - View available parts of speech, alternative spellings, additional information, and printed source-page references.
 - Access dictionary search results through a JSON API.
 
+### Android application
+
+- Install the application directly using a signed APK, without Google Play.
+- Download the dictionary for local storage on the device.
+- Search downloaded entries when the internet connection is unavailable.
+- Browse dictionary entries and use suggestions offline.
+- View dictionary download progress, the number of stored entries, and the last successful update time.
+- Check API connectivity through the online/offline status indicator.
+- Use dedicated scrollable areas for search suggestions and dictionary results.
+
+The offline dictionary is stored locally on the device. Downloading or updating the dictionary requires a connection to the backend. Offline functionality depends on a successful initial download and the availability of the locally stored data.
+
+### Search behavior
+
 Search normalization is used for comparison; it should not change the displayed source spelling. Because removing diacritics can make distinct spellings look alike, a diacritic-insensitive query may return multiple candidates.
 
 ## Technology stack
 
 - **Frontend:** Vue 3, TypeScript, Vite
+- **Mobile framework:** Capacitor
 - **Backend:** Python, FastAPI
 - **Database:** SQLite
 - **API:** JSON over HTTP
-- **Deployment:** Vercel (frontend) and Render (backend)
+- **Web deployment:** Vercel
+- **Backend deployment:** Render
+- **Android development:** Android Studio and Gradle
 
 ## Project structure
 
@@ -40,28 +62,34 @@ nupe-dictionary/
 ├── backend/
 │   └── main.py
 ├── frontend/
-│   └── src/
-│       ├── App.vue
-│       └── components/
+│   ├── src/
+│   │   ├── App.vue
+│   │   └── components/
+│   ├── android/
+│   ├── package.json
+│   ├── package-lock.json
+│   └── capacitor.config.ts
 ├── README.md
 └── ...
 ```
 
-The backend reads dictionary records from SQLite and exposes them through the API. Search requests should not modify dictionary records.
+The backend reads dictionary records from SQLite and exposes them through the API. The frontend provides the search interface, while the Android project packages the frontend for native Android installation.
+
+The exact directory structure and available scripts should be checked against the current branch.
 
 ## Getting started
-
-These instructions are a general local-development outline. Use the dependency files and scripts committed in the current branch as the source of truth.
 
 ### Prerequisites
 
 - Python
 - Node.js and npm
 - The project's backend dependencies and local dictionary database, where permitted and available
+- Android Studio for Android development
+- A compatible Java Development Kit and Android SDK, normally managed through Android Studio
 
 ### 1. Start the backend
 
-From the repository root, create and activate a virtual environment:
+From the repository root, create and activate a virtual environment.
 
 **Windows PowerShell**
 
@@ -76,7 +104,7 @@ Install dependencies using the requirements file in the repository. If it is loc
 pip install -r backend/requirements.txt
 ```
 
-Start the API from the directory containing `main.py`. For example, if `main.py` is inside `backend/`:
+Start the API from the directory containing `main.py`. For example:
 
 ```powershell
 cd backend
@@ -89,7 +117,7 @@ The backend must be configured to find the local SQLite database. Check the path
 
 ### 2. Start the frontend
 
-Open a second terminal:
+Open a second terminal from the repository root:
 
 ```powershell
 cd frontend
@@ -101,6 +129,84 @@ Vite prints the local development URL, commonly `http://localhost:5173`.
 
 Configure the frontend API base URL and backend CORS settings as required by the current environment. Do not commit secrets or private environment files.
 
+## Building the Android application
+
+The Android version uses Capacitor to package the frontend into an Android application.
+
+### Prerequisites
+
+- The frontend dependencies are installed.
+- Android Studio is installed and configured.
+- The Android project has been generated and synchronized with Capacitor.
+
+### 1. Build the frontend
+
+From the `frontend` directory:
+
+```powershell
+npm run build
+```
+
+### 2. Synchronize Capacitor
+
+After the frontend build succeeds, run:
+
+```powershell
+npx cap sync android
+```
+
+This updates the native Android project with the current web assets and Capacitor configuration.
+
+### 3. Open Android Studio
+
+Open the Android project generated by Capacitor, usually the `frontend/android` directory. Allow Gradle synchronization to finish, then run the application on an emulator or connected Android device.
+
+### 4. Generate a signed APK
+
+In Android Studio:
+
+1. Open **Build → Generate Signed Bundle / APK**.
+2. Select **APK**.
+3. Select the existing signing keystore or create one if this is the first release.
+4. Select the release build variant.
+5. Complete the signing wizard and generate the APK.
+
+The output location depends on the Android Gradle configuration and the Android Studio version. A common location is:
+
+```text
+frontend/android/app/release/
+```
+
+Another common Gradle output location is:
+
+```text
+frontend/android/app/build/outputs/apk/release/
+```
+
+Use the output location reported by Android Studio rather than assuming either path.
+
+### 5. Distribute the APK
+
+The signed APK can be shared directly with Android users through a trusted download link, file-hosting service, or another distribution channel.
+
+Recipients may need to allow installation from the source used to download the APK.
+
+Google Play is not required for this distribution method.
+
+**Important:** The APK is for Android devices only. It cannot be installed on iPhones or iPads.
+
+### 6. Release updates
+
+When publishing a new Android release:
+
+- Preserve the existing application ID.
+- Use the same signing key and alias used for the installed release.
+- Update the application version as appropriate.
+- Rebuild the frontend and synchronize Capacitor before generating the new APK.
+- Test the release APK before distributing it.
+
+Back up the signing keystore and passwords securely. Do not commit them to GitHub or distribute them with the APK. Losing the signing key can prevent you from updating installations signed with that key.
+
 ## API
 
 ### `GET /`
@@ -109,7 +215,7 @@ Returns basic API information.
 
 ### `GET /api/search?q=<query>`
 
-Searches dictionary entries and returns a JSON response with the query, result count, and matching entries. The maximum result count and response fields are defined by the deployed backend; consult the interactive API documentation for the current schema.
+Searches dictionary entries and returns a JSON response containing the query, result count, and matching entries. The maximum result count and response fields are defined by the deployed backend; consult the interactive API documentation for the current schema.
 
 A result may include fields such as:
 
@@ -129,7 +235,9 @@ Example local request:
 http://127.0.0.1:8000/api/search?q=fako
 ```
 
-Exact results depend on the dictionary database and current search implementation.
+The deployed API is available through the NupeDictionary backend. Exact results depend on the dictionary database and current search implementation.
+
+Additional endpoints support suggestions and alphabetical browsing. Consult `/docs` for the current parameters and response schemas.
 
 ## Dictionary data, source, and attribution
 
@@ -163,6 +271,7 @@ When changing the application:
 - Test entries with multiple senses, missing definitions, alternative spellings, and additional information.
 - Verify data-import changes against the source and check for duplicate or malformed records.
 - Update the database-generation process, schema, and API together when the data model changes.
+- Test online and offline behavior, including first download, application restarts, failed updates, and loss of connectivity.
 - Check desktop and mobile layouts, keyboard navigation, focus visibility, and accessible labels when changing the UI.
 
 ## Known limitations and future work
@@ -174,12 +283,13 @@ Dictionary data quality remains an ongoing process. Possible areas for future im
 - Improving automated regression tests for Unicode normalization and search ranking.
 - Adding more contributor guidance for dictionary corrections and data review.
 - Reviewing the representation of illustrations or other non-textual information in the source, if relevant and permitted.
+- Exploring an iOS release.
 
 Only mark a limitation as resolved after the relevant data or behaviour has been checked and verified.
 
 ## Support
 
-NupeDictionary is intended to make Nupe vocabulary more accessible and easier to explore. If you find it useful and would like to support ongoing development, you can contribute through **[Buy Me a Coffee](https://buymeacoffee.com/mosesvrr)**. Support is optional; the dictionary remains available to use online.
+NupeDictionary is intended to make Nupe vocabulary more accessible and easier to explore. If you find it useful and would like to support ongoing development, you can contribute through **[Buy Me a Coffee](https://buymeacoffee.com/mosesvrr)**. Support is optional; the dictionary remains free to use online and in the Android application.
 
 ---
 
