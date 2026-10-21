@@ -7,7 +7,7 @@
 
 ## Download NupeDictionary for Android
 
-**[Download the latest Android APK]([https://drive.google.com/file/d/1mdmOJnZj4MF-YrWUGjm6-OXGPNqkj3VF/view?usp=drive_link])**
+**[Download the latest Android APK](https://drive.google.com/file/d/1mdmOJnZj4MF-YrWUGjm6-OXGPNqkj3VF/view?usp=drive_link)**
 
 NupeDictionary is available as a free Android app. Download the APK to your Android device and install it directly without using Google Play.
 
